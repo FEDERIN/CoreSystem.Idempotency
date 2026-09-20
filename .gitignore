@@ -1,0 +1,51 @@
+# Build outputs
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files
+.vs/
+.vscode/
+.idea/
+.venv/
+*.swp
+
+# Local configuration
+appsettings.Development.json
+appsettings.Local.json
+
+# Local bootstrap scripts
+*.bat
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+
+*.db
+*.db-shm
+*.db-wal
+.env
+
+## coverage
+coverage/
+coverage-report/
+[Tt]est[Rr]esults/
+*.cobertura.xml
+**/CoverageReport/
+
+# --- NuGet ---
+nupkgs/
+dist/
+packages/
+*.nupkg
+*.snupkg
+
+# Data
+.data/
+grafana/data/
+prometheus/data/

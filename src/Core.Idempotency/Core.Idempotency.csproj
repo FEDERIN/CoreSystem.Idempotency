@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+		<PackageId>CoreSystem.Idempotency</PackageId>
+
+		<Version>2.0.0</Version>
+		<AssemblyVersion>2.0.0</AssemblyVersion>
+		<FileVersion>2.0.0.0</FileVersion>
+		<InformationalVersion>2.0.0</InformationalVersion>
+
+		<Authors>Federin Pastor Gutierrez Ortiz</Authors>
+
+		<Description>
+			Production-ready idempotency framework for ASP.NET Core featuring duplicate suppression, request fingerprinting, response replay, OpenTelemetry integration, and a provider-based storage architecture.
+		</Description>
+
+		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem</RepositoryUrl>
+		<PackageProjectUrl>https://federin.github.io/CoreSystem/Idempotency</PackageProjectUrl>
+
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+
+		<PackageTags>
+			Idempotency;
+			ASP.NET Core;
+			Middleware;
+			Distributed Systems;
+			Duplicate Suppression;
+			Request Fingerprinting;
+			Response Replay;
+			OpenTelemetry;
+			Observability;
+			Cloud Native;
+			Provider Based;
+			Distributed APIs
+		</PackageTags>
+	</PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Internal\Capture\**" />
+    <EmbeddedResource Remove="Internal\Capture\**" />
+    <None Remove="Internal\Capture\**" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="CoreSystem.Http" />
+    <PackageReference Include="CoreSystem.Observability.Abstractions" />
+    <PackageReference Include="CoreSystem.Serialization" />
+	<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+	  <None Include="LICENSE" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+	
+ <ItemGroup>
+	 <InternalsVisibleTo Include="Core.Idempotency.UnitTests" />
+	 <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+ </ItemGroup>
+</Project>
