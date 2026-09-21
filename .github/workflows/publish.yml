@@ -1,0 +1,121 @@
+name: Publish NuGet Package
+
+on:
+  push:
+    tags:
+      - '*/v*'
+
+permissions:
+  contents: read
+  id-token: write
+  packages: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x' 
+
+      - name: Extract info
+        run: |
+          # Extract project name (before the '/')
+          PROJECT_NAME=$(echo "$GITHUB_REF_NAME" | cut -d'/' -f1)
+          # Extract version (after the '/') and remove the 'v' prefix
+          VERSION=$(echo "$GITHUB_REF_NAME" | cut -d'/' -f2 | sed 's/^v//')
+          
+          echo "PROJECT=$PROJECT_NAME" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Resolve publish project and its tests
+        run: |
+          PROJECT_PATH="src/$PROJECT/$PROJECT.csproj"
+
+          if [ ! -f "$PROJECT_PATH" ]; then
+            echo "Error: Package project '$PROJECT_PATH' does not exist."
+            exit 1
+          fi
+
+          case "$PROJECT" in
+            Core.Cache)
+              TEST_PROJECTS="tests/Core.Cache.UnitTests/Core.Cache.UnitTests.csproj tests/Core.Cache.IntegrationTests/Core.Cache.IntegrationTests.csproj"
+              ;;
+            Core.Cache.Redis)
+              TEST_PROJECTS="tests/Core.Cache.Redis.UnitTests/Core.Cache.Redis.UnitTests.csproj"
+              ;;
+            Core.Cache.Rehydration)
+              TEST_PROJECTS="tests/Core.Cache.Rehydration.UnitTests/Core.Cache.Rehydration.UnitTests.csproj"
+              ;;
+            *)
+              echo "Error: No test-project mapping exists for '$PROJECT'."
+              exit 1
+              ;;
+          esac
+
+          echo "PROJECT_PATH=$PROJECT_PATH" >> $GITHUB_ENV
+          echo "TEST_PROJECTS=$TEST_PROJECTS" >> $GITHUB_ENV
+
+      - name: Restore package project and its tests
+        run: |
+          dotnet restore "$PROJECT_PATH" --locked-mode
+
+          for test_project in $TEST_PROJECTS; do
+            dotnet restore "$test_project" --locked-mode
+          done
+
+      - name: Build package project
+        run: |
+          dotnet build "$PROJECT_PATH" \
+            --configuration Release \
+            --no-restore \
+            /p:Version=$VERSION
+
+      - name: Test package project
+        run: |
+          for test_project in $TEST_PROJECTS; do
+            dotnet test "$test_project" \
+              --configuration Release \
+              --no-restore \
+              /p:Version=$VERSION
+          done
+
+      - name: Pack package
+        run: |
+          dotnet pack "$PROJECT_PATH" \
+            --configuration Release \
+            /p:Version=$VERSION \
+            --no-build \
+            --no-restore \
+            --output ./nupkgs
+
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Publish to NuGet
+        run: |
+          dotnet nuget push ./nupkgs/*.nupkg \
+            --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" \
+            --source "https://api.nuget.org/v3/index.json" \
+            --skip-duplicate
+
+      - name: Configure GitHub Packages
+        run: |
+          dotnet nuget add source \
+            --username "${{ github.actor }}" \
+            --password "${{ secrets.GITHUB_TOKEN }}" \
+            --store-password-in-clear-text \
+            --name github \
+            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+
+      - name: Publish to GitHub Packages
+        run: |
+          dotnet nuget push ./nupkgs/*.nupkg \
+            --source github \
+            --skip-duplicate
