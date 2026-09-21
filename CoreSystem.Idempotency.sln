@@ -1,0 +1,129 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.11.12210.170
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ADF8EB19-E9E1-4FDB-A042-6745CB5F0CE7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F06FED0A-9EBA-463B-81EC-1A98D00D066E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{A49BC089-73ED-467C-9A50-4A1741B4EA8C}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Architecture.md = docs\Architecture.md
+		docs\Configuration.md = docs\Configuration.md
+		docs\Fingerprinting.md = docs\Fingerprinting.md
+		docs\GettingStarted.md = docs\GettingStarted.md
+		docs\index.md = docs\index.md
+		docs\Observability.md = docs\Observability.md
+		docs\RequestLifecycle.md = docs\RequestLifecycle.md
+		docs\ResponseCaching.md = docs\ResponseCaching.md
+		docs\Roadmap.md = docs\Roadmap.md
+		docs\Why.md = docs\Why.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Idempotency", "src\Core.Idempotency\Core.Idempotency.csproj", "{C6E7D7A5-A7DC-86FB-9021-751DF579AA28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Idempotency.PostgreSql", "src\Core.Idempotency.PostgreSql\Core.Idempotency.PostgreSql.csproj", "{DBB21A50-3925-90A7-2784-80D5D22B527A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Idempotency.Redis", "src\Core.Idempotency.Redis\Core.Idempotency.Redis.csproj", "{0DB3B02F-10C8-4F6B-72FB-36B82CFDC705}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{F47F043D-4E9B-47FE-A847-028763610DDB}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.props = Directory.Packages.props
+		mkdocs.yml = mkdocs.yml
+		requirements.txt = requirements.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Providers", "Providers", "{A459EB8A-4CF2-42A0-81E7-A34A57D3A05B}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Providers\PostgreSQL.md = docs\Providers\PostgreSQL.md
+		docs\Providers\Redis.md = docs\Providers\Redis.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Errors", "Errors", "{41A7A7C8-E025-4198-97FC-8BC1C94F772B}"
+	ProjectSection(SolutionItems) = preProject
+		docs\Errors\idempotency-fingerprint-mismatch.md = docs\Errors\idempotency-fingerprint-mismatch.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Idempotency.UnitTests", "tests\Core.Idempotency.UnitTests\Core.Idempotency.UnitTests.csproj", "{567A8225-D89F-E544-3836-610412D5AD02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Idempotency.Redis.UnitTests", "tests\Core.Idempotency.Redis.UnitTests\Core.Idempotency.Redis.UnitTests.csproj", "{9913EDF6-C102-5895-3B0F-A7AF98E05845}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Idempotency.Redis.IntegrationTests", "tests\Core.Idempotency.Redis.IntegrationTests\Core.Idempotency.Redis.IntegrationTests.csproj", "{C58575B6-6E9D-2A3B-DCAD-D9930B439447}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Idempotency.PostgreSql.UnitTests", "tests\Core.Idempotency.PostgreSql.UnitTests\Core.Idempotency.PostgreSql.UnitTests.csproj", "{1C3690F8-9081-041E-1AEF-9317B88B9E96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Idempotency.PostgreSql.IntegrationTests", "tests\Core.Idempotency.PostgreSql.IntegrationTests\Core.Idempotency.PostgreSql.IntegrationTests.csproj", "{824EDDB6-C5D9-3824-4678-CD6AB048DA9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{A268F4E6-EBCB-43D8-B72C-9B0E6ADFF3BD}"
+	ProjectSection(SolutionItems) = preProject
+		.github\dependabot.yml = .github\dependabot.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{1C328094-53D8-4BBE-8481-808E0C2C1A4D}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+		.github\workflows\codeql.yml = .github\workflows\codeql.yml
+		.github\workflows\documentation.yml = .github\workflows\documentation.yml
+		.github\workflows\publish.yml = .github\workflows\publish.yml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6E7D7A5-A7DC-86FB-9021-751DF579AA28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6E7D7A5-A7DC-86FB-9021-751DF579AA28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6E7D7A5-A7DC-86FB-9021-751DF579AA28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6E7D7A5-A7DC-86FB-9021-751DF579AA28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBB21A50-3925-90A7-2784-80D5D22B527A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBB21A50-3925-90A7-2784-80D5D22B527A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBB21A50-3925-90A7-2784-80D5D22B527A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBB21A50-3925-90A7-2784-80D5D22B527A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DB3B02F-10C8-4F6B-72FB-36B82CFDC705}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DB3B02F-10C8-4F6B-72FB-36B82CFDC705}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DB3B02F-10C8-4F6B-72FB-36B82CFDC705}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DB3B02F-10C8-4F6B-72FB-36B82CFDC705}.Release|Any CPU.Build.0 = Release|Any CPU
+		{567A8225-D89F-E544-3836-610412D5AD02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{567A8225-D89F-E544-3836-610412D5AD02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{567A8225-D89F-E544-3836-610412D5AD02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{567A8225-D89F-E544-3836-610412D5AD02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9913EDF6-C102-5895-3B0F-A7AF98E05845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9913EDF6-C102-5895-3B0F-A7AF98E05845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9913EDF6-C102-5895-3B0F-A7AF98E05845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9913EDF6-C102-5895-3B0F-A7AF98E05845}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C58575B6-6E9D-2A3B-DCAD-D9930B439447}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C58575B6-6E9D-2A3B-DCAD-D9930B439447}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C58575B6-6E9D-2A3B-DCAD-D9930B439447}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C58575B6-6E9D-2A3B-DCAD-D9930B439447}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C3690F8-9081-041E-1AEF-9317B88B9E96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C3690F8-9081-041E-1AEF-9317B88B9E96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C3690F8-9081-041E-1AEF-9317B88B9E96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C3690F8-9081-041E-1AEF-9317B88B9E96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{824EDDB6-C5D9-3824-4678-CD6AB048DA9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{824EDDB6-C5D9-3824-4678-CD6AB048DA9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{824EDDB6-C5D9-3824-4678-CD6AB048DA9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{824EDDB6-C5D9-3824-4678-CD6AB048DA9A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C6E7D7A5-A7DC-86FB-9021-751DF579AA28} = {ADF8EB19-E9E1-4FDB-A042-6745CB5F0CE7}
+		{DBB21A50-3925-90A7-2784-80D5D22B527A} = {ADF8EB19-E9E1-4FDB-A042-6745CB5F0CE7}
+		{0DB3B02F-10C8-4F6B-72FB-36B82CFDC705} = {ADF8EB19-E9E1-4FDB-A042-6745CB5F0CE7}
+		{A459EB8A-4CF2-42A0-81E7-A34A57D3A05B} = {A49BC089-73ED-467C-9A50-4A1741B4EA8C}
+		{41A7A7C8-E025-4198-97FC-8BC1C94F772B} = {A49BC089-73ED-467C-9A50-4A1741B4EA8C}
+		{567A8225-D89F-E544-3836-610412D5AD02} = {F06FED0A-9EBA-463B-81EC-1A98D00D066E}
+		{9913EDF6-C102-5895-3B0F-A7AF98E05845} = {F06FED0A-9EBA-463B-81EC-1A98D00D066E}
+		{C58575B6-6E9D-2A3B-DCAD-D9930B439447} = {F06FED0A-9EBA-463B-81EC-1A98D00D066E}
+		{1C3690F8-9081-041E-1AEF-9317B88B9E96} = {F06FED0A-9EBA-463B-81EC-1A98D00D066E}
+		{824EDDB6-C5D9-3824-4678-CD6AB048DA9A} = {F06FED0A-9EBA-463B-81EC-1A98D00D066E}
+		{1C328094-53D8-4BBE-8481-808E0C2C1A4D} = {A268F4E6-EBCB-43D8-B72C-9B0E6ADFF3BD}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {89E5D3A3-4346-4BB6-9BDD-45DD5908AAAB}
+	EndGlobalSection
+EndGlobal

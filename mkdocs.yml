@@ -1,0 +1,51 @@
+site_name: CoreSystem.Idempotency
+site_description: Production-ready idempotency libraries for modern .NET applications
+site_author: Federin Pastor Gutierrez Ortiz
+site_url: https://federin.github.io/CoreSystem.idempotency/
+
+repo_name: FEDERIN/CoreSystem.Idempotency
+repo_url: https://github.com/FEDERIN/CoreSystem.Idempotency
+
+theme:
+  name: material
+  language: en
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - content.code.copy
+    - search.highlight
+    - search.suggest
+
+plugins:
+  - search
+  - mermaid2
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+
+nav:
+  - Home: index.md
+  - Getting Started: GettingStarted.md
+  - Core Idempotency:
+      - Why: Why.md
+      - Architecture: Architecture.md
+      - Delivery Guarantees: Guarantees.md
+      - Request Lifecycle: RequestLifecycle.md
+      - Fingerprinting: Fingerprinting.md
+      - Response Replay: ResponseCaching.md
+      - Configuration: Configuration.md
+      - Providers:
+          - Redis: Providers/Redis.md
+          - PostgreSQL: Providers/PostgreSQL.md
+      - Observability: Observability.md
+      - Errors:
+          - Fingerprint Mismatch: Errors/idempotency-fingerprint-mismatch.md
+      - Roadmap: Roadmap.md

@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet restore CoreSystem.Idempotency.sln --locked-mode
+      - run: dotnet build CoreSystem.Idempotency.sln --no-restore --configuration Release
+      - run: dotnet test tests/Core.Idempotency.UnitTests/Core.Idempotency.UnitTests.csproj --no-build --configuration Release
+      - run: dotnet test tests/Core.Idempotency.Redis.UnitTests/Core.Idempotency.Redis.UnitTests.csproj --no-build --configuration Release
+      - run: dotnet test tests/Core.Idempotency.PostgreSql.UnitTests/Core.Idempotency.PostgreSql.UnitTests.csproj --no-build --configuration Release
+      - run: dotnet list CoreSystem.Idempotency.sln package --vulnerable --include-transitive
+
+  integration-test:
+    runs-on: ubuntu-latest
+    needs: build-and-unit-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet restore CoreSystem.Idempotency.sln --locked-mode
+      - run: dotnet test tests/Core.Idempotency.Redis.IntegrationTests/Core.Idempotency.Redis.IntegrationTests.csproj --no-restore --configuration Release
+      - run: dotnet test tests/Core.Idempotency.PostgreSql.IntegrationTests/Core.Idempotency.PostgreSql.IntegrationTests.csproj --no-restore --configuration Release
