@@ -160,7 +160,7 @@ internal sealed class PostgreSqlIdempotencyStorage(
                 Key = key,
                 LeaseId = leaseId,
                 RequestFingerprint = entry.RequestFingerprint?.Value,
-                HashAlgorithm = entry.RequestFingerprint?.HashAlgorithm,
+                entry.RequestFingerprint?.HashAlgorithm,
                 response.StatusCode,
                 response.ContentType,
                 Headers = serializer.Serialize(response.Headers),
