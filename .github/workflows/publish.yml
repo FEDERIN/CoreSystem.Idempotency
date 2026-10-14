@@ -15,19 +15,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x' 
+          global-json-file: global.json
 
       - name: Extract info
         run: |
-          # Extract project name (before the '/')
+          # Tag format is <project folder>/v<version>, e.g. Core.Idempotency/v2.0.1
           PROJECT_NAME=$(echo "$GITHUB_REF_NAME" | cut -d'/' -f1)
-          # Extract version (after the '/') and remove the 'v' prefix
           VERSION=$(echo "$GITHUB_REF_NAME" | cut -d'/' -f2 | sed 's/^v//')
-          
+
+          if [ -z "$PROJECT_NAME" ] || [ -z "$VERSION" ]; then
+            echo "Error: expected a tag of the form <project>/v<version>, got '$GITHUB_REF_NAME'."
+            exit 1
+          fi
+
           echo "PROJECT=$PROJECT_NAME" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
@@ -40,18 +46,22 @@ jobs:
             exit 1
           fi
 
+          # Every package that can be released needs an entry here. A package that
+          # depends on another (the providers depend on Core.Idempotency) must be
+          # tagged only after its dependency is already on the feed.
           case "$PROJECT" in
-            Core.Cache)
-              TEST_PROJECTS="tests/Core.Cache.UnitTests/Core.Cache.UnitTests.csproj tests/Core.Cache.IntegrationTests/Core.Cache.IntegrationTests.csproj"
+            Core.Idempotency)
+              TEST_PROJECTS="tests/Core.Idempotency.UnitTests/Core.Idempotency.UnitTests.csproj"
               ;;
-            Core.Cache.Redis)
-              TEST_PROJECTS="tests/Core.Cache.Redis.UnitTests/Core.Cache.Redis.UnitTests.csproj"
+            Core.Idempotency.Redis)
+              TEST_PROJECTS="tests/Core.Idempotency.Redis.UnitTests/Core.Idempotency.Redis.UnitTests.csproj tests/Core.Idempotency.Redis.IntegrationTests/Core.Idempotency.Redis.IntegrationTests.csproj"
               ;;
-            Core.Cache.Rehydration)
-              TEST_PROJECTS="tests/Core.Cache.Rehydration.UnitTests/Core.Cache.Rehydration.UnitTests.csproj"
+            Core.Idempotency.PostgreSql)
+              TEST_PROJECTS="tests/Core.Idempotency.PostgreSql.UnitTests/Core.Idempotency.PostgreSql.UnitTests.csproj tests/Core.Idempotency.PostgreSql.IntegrationTests/Core.Idempotency.PostgreSql.IntegrationTests.csproj"
               ;;
             *)
               echo "Error: No test-project mapping exists for '$PROJECT'."
+              echo "Add a case entry in .github/workflows/publish.yml before releasing it."
               exit 1
               ;;
           esac
@@ -69,10 +79,36 @@ jobs:
 
       - name: Build package project
         run: |
+          # Version is overridden on the command line, so all four version properties
+          # must be passed. Overriding only /p:Version would leave AssemblyVersion,
+          # FileVersion and InformationalVersion at the value hard-coded in the
+          # csproj, shipping a package whose assembly metadata contradicts its nuspec.
           dotnet build "$PROJECT_PATH" \
             --configuration Release \
             --no-restore \
-            /p:Version=$VERSION
+            /p:Version=$VERSION \
+            /p:AssemblyVersion=$VERSION \
+            /p:FileVersion=$VERSION \
+            /p:InformationalVersion=$VERSION
+
+      - name: Verify version metadata
+        run: |
+          DLL=$(find src/$PROJECT/bin/Release -name "$PROJECT.dll" | head -n 1)
+
+          if [ -z "$DLL" ]; then
+            echo "Error: expected an assembly under src/$PROJECT/bin/Release, found none."
+            exit 1
+          fi
+
+          ACTUAL=$(dotnet msbuild "$PROJECT_PATH" -getProperty:AssemblyVersion -p:Version=$VERSION -p:AssemblyVersion=$VERSION 2>/dev/null | tail -n 1 | tr -d '"')
+
+          if [ "$ACTUAL" != "$VERSION" ]; then
+            echo "Error: AssemblyVersion is '$ACTUAL' but the tag requests '$VERSION'."
+            echo "The four version properties must agree before tagging."
+            exit 1
+          fi
+
+          echo "Version metadata consistent: $VERSION"
 
       - name: Test package project
         run: |
@@ -80,7 +116,10 @@ jobs:
             dotnet test "$test_project" \
               --configuration Release \
               --no-restore \
-              /p:Version=$VERSION
+              /p:Version=$VERSION \
+              /p:AssemblyVersion=$VERSION \
+              /p:FileVersion=$VERSION \
+              /p:InformationalVersion=$VERSION
           done
 
       - name: Pack package
@@ -88,6 +127,9 @@ jobs:
           dotnet pack "$PROJECT_PATH" \
             --configuration Release \
             /p:Version=$VERSION \
+            /p:AssemblyVersion=$VERSION \
+            /p:FileVersion=$VERSION \
+            /p:InformationalVersion=$VERSION \
             --no-build \
             --no-restore \
             --output ./nupkgs

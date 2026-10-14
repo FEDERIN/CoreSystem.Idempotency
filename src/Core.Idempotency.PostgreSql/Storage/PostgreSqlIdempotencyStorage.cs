@@ -201,8 +201,8 @@ internal sealed class PostgreSqlIdempotencyStorage(
         INSERT INTO idempotency_keys
         (
             key,
-            request_Fingerprint,
-            hash_Algorithm,
+            request_fingerprint,
+            hash_algorithm,
             status_code,
             content_type,
             headers,

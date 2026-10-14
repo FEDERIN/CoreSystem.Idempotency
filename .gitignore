@@ -12,6 +12,9 @@ obj/
 .venv/
 *.swp
 
+# Generated documentation site (mkdocs build output)
+site/
+
 # Local configuration
 appsettings.Development.json
 appsettings.Local.json

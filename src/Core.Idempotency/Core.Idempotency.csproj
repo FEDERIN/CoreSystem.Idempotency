@@ -21,8 +21,8 @@
 			Production-ready idempotency framework for ASP.NET Core featuring duplicate suppression, request fingerprinting, response replay, OpenTelemetry integration, and a provider-based storage architecture.
 		</Description>
 
-		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem</RepositoryUrl>
-		<PackageProjectUrl>https://federin.github.io/CoreSystem/Idempotency</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem.Idempotency</RepositoryUrl>
+		<PackageProjectUrl>https://federin.github.io/CoreSystem.Idempotency/</PackageProjectUrl>
 
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>

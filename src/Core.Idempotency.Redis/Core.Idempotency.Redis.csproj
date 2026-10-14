@@ -20,8 +20,8 @@
 			Production-ready Redis storage provider for CoreSystem.Idempotency, providing high-performance distributed persistence through the IIdempotencyStorage abstraction.
 		</Description>
 
-		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem</RepositoryUrl>
-		<PackageProjectUrl>https://federin.github.io/CoreSystem/Idempotency/Providers/Redis</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem.Idempotency</RepositoryUrl>
+		<PackageProjectUrl>https://federin.github.io/CoreSystem.Idempotency/Providers/Redis/</PackageProjectUrl>
 
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
