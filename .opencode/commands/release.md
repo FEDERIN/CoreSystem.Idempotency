@@ -8,20 +8,20 @@ Target: $ARGUMENTS
 
 Accept two arguments and nothing else:
 
-    release Cache.Redis 2.5.1
+    release Redis 2.5.1
 
-- `$argumentA` = component without prefix, e.g. `Cache`, `Cache.Redis`
+- `$argumentA` = component without prefix, e.g. `Idempotency`, `Idempotency.Redis`
 - `$argumentB` = version, e.g. `2.5.1`
 
 Derive, do not hardcode:
 
-    $NAME    = Core.$argumentA          -> Core.Cache.Redis        (folder, paths, tag)
-    $PACKAGE = CoreSystem.$argumentA    -> CoreSystem.Cache.Redis  (PackageId, nuspec)
-    $TAG     = $NAME/v$argumentB        -> Core.Cache.Redis/v2.5.1
+    $NAME    = Core.$argumentA          -> Core.Idempotency        (folder, paths, tag)
+    $PACKAGE = CoreSystem.$argumentA    -> CoreSystem.Idempotency  (PackageId, nuspec)
+    $TAG     = $NAME/v$argumentB        -> Core.Idempotency/v2.0.1
 
 The `Core.` prefix belongs to paths and tags. The `CoreSystem.` prefix belongs
 to the PackageId and the tag message. They are not interchangeable: the folder
-is `Core.Cache.Redis` while the package is `CoreSystem.Cache.Redis`, and
+is `Core.Idempotency` while the package is `CoreSystem.Idempotency`, and
 publish.yml resolves the csproj as `src/$PROJECT/$PROJECT.csproj`, so the tag
 must carry the folder name or the workflow fails before packing.
 
@@ -76,7 +76,7 @@ fi
 
 Unit tests missing means ABORT. Integration tests missing means continue and
 say so in the summary, because that is the state of the repo rather than an
-omission: only `Cache` has an integration project.
+omission: only `Redis` and `PostgreSql` have integration projects; `Idempotency` itself does not.
 
 ## 3. Pre-checks
 
@@ -100,7 +100,7 @@ dotnet build   src/Core.$argumentA/Core.$argumentA.csproj -c Release --no-restor
 
 Do not run `dotnet restore <solution> --force-evaluate` here. Measured on this
 repo it leaves lock files intact but rewrites a stale version anchor, for
-example `CoreSystem.Cache` from `[2.1.1, )` to `[3.0.0, )`. That is a correct
+example `CoreSystem.Idempotency` from `[1.0.6, )` to `[2.0.1, )`. That is a correct
 update, not damage, but it is unrelated to the release. If any lock file
 changes as a side effect, revert it before committing.
 
@@ -157,7 +157,7 @@ Do not sleep in a loop polling nuget.org for the new version to appear. The
 index lags a publish by several minutes and the workflow result already states
 whether the push succeeded. Report what the workflow returned and stop.
 
-Published versions are immutable. `CoreSystem.Cache` 3.0.0 is already live, so
+Published versions are immutable. `CoreSystem.Idempotency` 2.0.0 is already live, so
 it can never be re-pushed; a re-publish attempt fails with 409, which is the
 correct outcome. Never publish if a required validation failed or the tag
 exists.
@@ -166,7 +166,7 @@ exists.
 
 Base-first, not reverse:
 
-    Cache  ->  Cache.Rehydration  ->  Cache.Redis
+    Core.Idempotency  ->  Core.Idempotency.Redis, Core.Idempotency.PostgreSql
 
 An unversioned `ProjectReference` becomes a nuspec dependency of the referenced
 version, so publishing a dependent first puts a package on the feed whose
