@@ -14,26 +14,20 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
-          global-json-file: global.json
+          dotnet-version: '8.0.x' 
 
       - name: Extract info
         run: |
-          # Tag format is <project folder>/v<version>, e.g. Core.Idempotency/v2.0.1
+          # Extract project name (before the '/')
           PROJECT_NAME=$(echo "$GITHUB_REF_NAME" | cut -d'/' -f1)
+          # Extract version (after the '/') and remove the 'v' prefix
           VERSION=$(echo "$GITHUB_REF_NAME" | cut -d'/' -f2 | sed 's/^v//')
-
-          if [ -z "$PROJECT_NAME" ] || [ -z "$VERSION" ]; then
-            echo "Error: expected a tag of the form <project>/v<version>, got '$GITHUB_REF_NAME'."
-            exit 1
-          fi
-
+          
           echo "PROJECT=$PROJECT_NAME" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
@@ -46,9 +40,6 @@ jobs:
             exit 1
           fi
 
-          # Every package that can be released needs an entry here. A package that
-          # depends on another (the providers depend on Core.Idempotency) must be
-          # tagged only after its dependency is already on the feed.
           case "$PROJECT" in
             Core.Idempotency)
               TEST_PROJECTS="tests/Core.Idempotency.UnitTests/Core.Idempotency.UnitTests.csproj"
@@ -69,6 +60,17 @@ jobs:
           echo "PROJECT_PATH=$PROJECT_PATH" >> $GITHUB_ENV
           echo "TEST_PROJECTS=$TEST_PROJECTS" >> $GITHUB_ENV
 
+          # The PackageId is not always the project folder name, so read it from
+          # the csproj instead of assuming. The push step below pushes this exact
+          # file rather than a glob over ./nupkgs.
+          PACKAGE_ID=$(grep -oPm1 '(?<=<PackageId>)[^<]+' "$PROJECT_PATH")
+          if [ -z "$PACKAGE_ID" ]; then
+            echo "Error: could not read <PackageId> from '$PROJECT_PATH'."
+            exit 1
+          fi
+
+          echo "PACKAGE_ID=$PACKAGE_ID" >> $GITHUB_ENV
+
       - name: Restore package project and its tests
         run: |
           dotnet restore "$PROJECT_PATH" --locked-mode
@@ -79,36 +81,10 @@ jobs:
 
       - name: Build package project
         run: |
-          # Version is overridden on the command line, so all four version properties
-          # must be passed. Overriding only /p:Version would leave AssemblyVersion,
-          # FileVersion and InformationalVersion at the value hard-coded in the
-          # csproj, shipping a package whose assembly metadata contradicts its nuspec.
           dotnet build "$PROJECT_PATH" \
             --configuration Release \
             --no-restore \
-            /p:Version=$VERSION \
-            /p:AssemblyVersion=$VERSION \
-            /p:FileVersion=$VERSION \
-            /p:InformationalVersion=$VERSION
-
-      - name: Verify version metadata
-        run: |
-          DLL=$(find src/$PROJECT/bin/Release -name "$PROJECT.dll" | head -n 1)
-
-          if [ -z "$DLL" ]; then
-            echo "Error: expected an assembly under src/$PROJECT/bin/Release, found none."
-            exit 1
-          fi
-
-          ACTUAL=$(dotnet msbuild "$PROJECT_PATH" -getProperty:AssemblyVersion -p:Version=$VERSION -p:AssemblyVersion=$VERSION 2>/dev/null | tail -n 1 | tr -d '"')
-
-          if [ "$ACTUAL" != "$VERSION" ]; then
-            echo "Error: AssemblyVersion is '$ACTUAL' but the tag requests '$VERSION'."
-            echo "The four version properties must agree before tagging."
-            exit 1
-          fi
-
-          echo "Version metadata consistent: $VERSION"
+            /p:Version=$VERSION
 
       - name: Test package project
         run: |
@@ -116,23 +92,37 @@ jobs:
             dotnet test "$test_project" \
               --configuration Release \
               --no-restore \
-              /p:Version=$VERSION \
-              /p:AssemblyVersion=$VERSION \
-              /p:FileVersion=$VERSION \
-              /p:InformationalVersion=$VERSION
+              /p:Version=$VERSION
           done
 
       - name: Pack package
         run: |
+          rm -rf ./nupkgs
           dotnet pack "$PROJECT_PATH" \
             --configuration Release \
             /p:Version=$VERSION \
-            /p:AssemblyVersion=$VERSION \
-            /p:FileVersion=$VERSION \
-            /p:InformationalVersion=$VERSION \
             --no-build \
             --no-restore \
             --output ./nupkgs
+
+          # Fail here if the expected package is missing, or if anything else
+          # landed in the folder. Pushing a glob would otherwise publish
+          # whatever happened to be present.
+          EXPECTED="./nupkgs/$PACKAGE_ID.$VERSION.nupkg"
+          if [ ! -f "$EXPECTED" ]; then
+            echo "Error: expected '$EXPECTED' but it was not produced."
+            ls -la ./nupkgs || true
+            exit 1
+          fi
+
+          COUNT=$(find ./nupkgs -maxdepth 1 -name '*.nupkg' | wc -l)
+          if [ "$COUNT" -ne 1 ]; then
+            echo "Error: expected exactly 1 nupkg in ./nupkgs, found $COUNT."
+            ls -la ./nupkgs || true
+            exit 1
+          fi
+
+          echo "PACKAGE_PATH=$EXPECTED" >> $GITHUB_ENV
 
       - name: NuGet login
         uses: NuGet/login@v1
@@ -141,23 +131,35 @@ jobs:
           user: ${{ secrets.NUGET_USER }}
 
       - name: Publish to NuGet
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: |
-          dotnet nuget push ./nupkgs/*.nupkg \
-            --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" \
-            --source "https://api.nuget.org/v3/index.json" \
-            --skip-duplicate
+          # No --skip-duplicate. It downgrades a 409 Conflict to a warning, so a
+          # re-run of an already published version would report success while
+          # publishing nothing. Published versions are immutable, so a 409 here
+          # means the version is already live and this run is redundant: fail
+          # loudly instead of pretending to publish.
+          dotnet nuget push "$PACKAGE_PATH" \
+            --api-key "$NUGET_API_KEY" \
+            --source "https://api.nuget.org/v3/index.json"
 
       - name: Configure GitHub Packages
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           dotnet nuget add source \
-            --username "${{ github.actor }}" \
-            --password "${{ secrets.GITHUB_TOKEN }}" \
+            --username "$GITHUB_USERNAME" \
+            --password "$GITHUB_TOKEN" \
             --store-password-in-clear-text \
             --name github \
-            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+            "https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json"
 
       - name: Publish to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          dotnet nuget push ./nupkgs/*.nupkg \
+          dotnet nuget push "$PACKAGE_PATH" \
             --source github \
-            --skip-duplicate
+            --api-key "$GITHUB_TOKEN"
