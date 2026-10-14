@@ -21,8 +21,8 @@
 			Production-ready PostgreSQL storage provider for CoreSystem.Idempotency, providing durable persistence through the IIdempotencyStorage abstraction with Dapper-based data access. Ships an idempotent schema script at scripts/postgres.sql.
 		</Description>
 
-		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem</RepositoryUrl>
-		<PackageProjectUrl>https://federin.github.io/CoreSystem/Idempotency/Providers/PostgreSQL</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem.Idempotency</RepositoryUrl>
+		<PackageProjectUrl>https://federin.github.io/CoreSystem.Idempotency/Providers/PostgreSQL/</PackageProjectUrl>
 
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -52,6 +52,11 @@
 
 	<ItemGroup>
 		<None Include="README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- Ship the DDL so consumers can create the table; the provider does not create schema. -->
+		<None Include="scripts\postgres.sql" Pack="true" PackagePath="scripts\" />
 	</ItemGroup>
 
 	<ItemGroup>

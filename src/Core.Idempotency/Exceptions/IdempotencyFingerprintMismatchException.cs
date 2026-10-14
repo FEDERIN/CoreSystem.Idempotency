@@ -11,7 +11,7 @@ public sealed class IdempotencyFingerprintMismatchException : Exception
     public const string Title = "Idempotency fingerprint mismatch";
 
     public const string Type =
-        "https://federin.github.io/CoreSystem/Idempotency/Errors/idempotency-fingerprint-mismatch/";
+        "https://federin.github.io/CoreSystem.Idempotency/Errors/idempotency-fingerprint-mismatch/";
 
     public IdempotencyFingerprintMismatchException()
         : base("The request fingerprint does not match the existing idempotency entry.")

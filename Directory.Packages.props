@@ -9,9 +9,6 @@
     <PackageVersion Include="CoreSystem.Cache.Redis" Version="2.0.2" />
     <PackageVersion Include="CoreSystem.Cache.Rehydration" Version="2.0.2" />
     <PackageVersion Include="CoreSystem.Http" Version="1.0.6" />
-    <PackageVersion Include="CoreSystem.Idempotency" Version="2.0.0" />
-    <PackageVersion Include="CoreSystem.Idempotency.PostgreSql" Version="2.0.0" />
-    <PackageVersion Include="CoreSystem.Idempotency.Redis" Version="2.0.0" />
     <PackageVersion Include="CoreSystem.Memory" Version="1.0.0" />
     <PackageVersion Include="CoreSystem.Observability" Version="1.0.0" />
     <PackageVersion Include="CoreSystem.Observability.Abstractions" Version="1.0.0" />
