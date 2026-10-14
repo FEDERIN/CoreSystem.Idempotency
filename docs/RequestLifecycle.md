@@ -6,7 +6,7 @@ Understanding the request lifecycle helps explain how concurrent duplicate reque
 
 ---
 
-# Overview
+## 📋 Overview
 
 Every request passes through the idempotency middleware before reaching the application endpoint.
 
@@ -21,7 +21,7 @@ The middleware coordinates the complete idempotency workflow by:
 
 ---
 
-# Request Flow
+## 🔄 Request Flow
 
 ```text
                   Incoming Request
@@ -71,7 +71,7 @@ Response    Exception
 
 ---
 
-# Step 1 — Validate the Request
+## ✅ Step 1 — Validate the Request
 
 The middleware first determines whether idempotency should be applied.
 
@@ -85,7 +85,7 @@ Requests that do not satisfy these requirements continue through the ASP.NET Cor
 
 ---
 
-# Step 2 — Generate the Request Fingerprint
+## 🔐 Step 2 — Generate the Request Fingerprint
 
 A fingerprint uniquely identifies the logical request.
 
@@ -102,7 +102,7 @@ See **Fingerprinting** for implementation details.
 
 ---
 
-# Step 3 — Query the Storage Layer
+## 💾 Step 3 — Query the Storage Layer
 
 The middleware queries the configured `IIdempotencyStorage` implementation using the resolved idempotency key.
 
@@ -112,7 +112,7 @@ CoreSystem.Idempotency is independent from the underlying persistence technology
 
 ---
 
-# Step 4 — Existing Entry
+## ♻️ Step 4 — Existing Entry
 
 If an idempotency entry already exists:
 
@@ -126,7 +126,7 @@ The application endpoint is never executed a second time.
 
 ---
 
-# Step 5 — New Request
+## 🆕 Step 5 — New Request
 
 If no completed entry exists, the middleware first attempts to acquire a short-lived lease for the key:
 
@@ -145,7 +145,7 @@ After acquiring the lease:
 
 ---
 
-# Step 6 — Response Replay
+## 📤 Step 6 — Response Replay
 
 When a duplicate request is detected, the middleware reconstructs the original response.
 
@@ -160,7 +160,7 @@ The client receives exactly the same response that was produced by the original 
 
 ---
 
-# Error Handling
+## ⚠️ Error Handling
 
 The middleware may terminate request processing under the following conditions.
 
@@ -177,7 +177,7 @@ See **Errors** for detailed exception documentation.
 
 ---
 
-# Performance Considerations
+## ⏱️ Performance Considerations
 
 The middleware is optimized for high-throughput APIs.
 
@@ -191,7 +191,7 @@ This significantly reduces processing time while preventing duplicate side effec
 
 ---
 
-# Related Documentation
+## 📚 Related Documentation
 
 - Architecture
 - Configuration

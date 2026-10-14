@@ -6,7 +6,7 @@ It stores idempotency entries in a relational database using **Dapper**, making 
 
 ---
 
-# Why PostgreSQL?
+## ❓ Why PostgreSQL?
 
 Choose the PostgreSQL provider when your application requires:
 
@@ -20,7 +20,7 @@ If your primary goal is ultra-low latency, consider the **Redis provider** inste
 
 ---
 
-# Requirements
+## 📋 Requirements
 
 Before using the provider, ensure you have:
 
@@ -32,7 +32,7 @@ Before using the provider, ensure you have:
 
 ---
 
-# Installation
+## 📦 Installation
 
 Install the provider package.
 
@@ -52,32 +52,54 @@ builder.Services
     })
     .AddCoreIdempotencyPostgreSql(options =>
     {
-        builder.Configuration
-            .GetSection("ConnectionStrings")
-            .Bind(options);
+        options.ConnectionString =
+            builder.Configuration.GetConnectionString("Idempotency");
     });
 ```
 
+> **Important**
+>
+> `PostgreSqlOptions` exposes a single property, `ConnectionString`. Binding the whole
+> `ConnectionStrings` section does not populate it, because that section's children are
+> named `Redis` and `Idempotency`, not `ConnectionString`. Read the value explicitly, as
+> shown above.
+>
+> If you leave `ConnectionString` null or empty, registration throws
+> `InvalidOperationException` reporting that a PostgreSQL connection string is required.
+
 ---
 
-# Database Setup
+## 🗄 Database Setup
 
-The provider automatically creates the required table and indexes during application startup.
+The provider does **not** create any schema. You must apply the DDL yourself, once,
+before the first request reaches the application.
 
 > **Important**
 >
-> The PostgreSQL database must already exist.
-> The provider creates tables and indexes, but it does **not** create databases.
+> The provider never runs `CREATE TABLE` or `CREATE INDEX`. Applying the script is
+> the caller's responsibility. The integration tests do this explicitly in their
+> container fixture.
+>
+> The PostgreSQL database itself must also already exist; the provider does not
+> create databases either.
 
-Example:
+1. Create the database:
 
 ```sql
 CREATE DATABASE idempotency_db;
 ```
 
+2. Apply the schema script shipped with the package at `scripts/postgres.sql`:
+
+```bash
+psql -h localhost -U admin -d idempotency_db -f scripts/postgres.sql
+```
+
+The script is idempotent, so it is safe to run on every deployment.
+
 ---
 
-# Connection String
+## 🔗 Connection String
 
 Configure the PostgreSQL connection string.
 
@@ -91,33 +113,51 @@ Configure the PostgreSQL connection string.
 
 ---
 
-# Database Schema
+## 🗃 Database Schema
 
-The provider automatically creates the following table.
+The provider requires the following table. Apply it with `scripts/postgres.sql`,
+which ships inside the NuGet package.
 
 ```sql
-CREATE TABLE idempotency_keys
+CREATE TABLE IF NOT EXISTS idempotency_keys
 (
-    key                 VARCHAR(255) PRIMARY KEY,
-    request_fingerprint TEXT NULL,
-    hash_algorithm      VARCHAR(255),
-    status_code         INTEGER NOT NULL,
-    content_type        VARCHAR(255),
-    headers             BYTEA NOT NULL,
-    body                BYTEA,
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    expires_at          TIMESTAMPTZ NOT NULL
+    key TEXT PRIMARY KEY,
+
+    state TEXT NOT NULL DEFAULT 'completed' CHECK (state IN ('in_progress', 'completed')),
+
+    lease_id TEXT,
+
+    request_fingerprint TEXT,
+
+    hash_algorithm TEXT,
+
+    status_code INTEGER,
+
+    content_type TEXT,
+
+    headers BYTEA,
+
+    body BYTEA,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    expires_at TIMESTAMPTZ NOT NULL
 );
 
-CREATE INDEX idx_idempotency_keys_expires_at
-ON idempotency_keys (expires_at);
+CREATE INDEX IF NOT EXISTS idx_idempotency_expires
+    ON idempotency_keys (expires_at);
 ```
+
+`state` and `lease_id` are required. The provider acquires ownership of a key by
+inserting `state = 'in_progress'` together with a generated `lease_id`, and only the
+request holding that lease may complete or release the entry. A table created without
+those two columns fails on the first request.
 
 The schema is optimized for idempotency lookups and response replay.
 
 ---
 
-# Expired Records
+## ⏳ Expired Records
 
 Expired entries are not removed automatically.
 
@@ -135,7 +175,7 @@ The cleanup frequency depends on your retention policy and expected request volu
 
 ---
 
-# Recommended Maintenance
+## 🔧 Recommended Maintenance
 
 For production environments, schedule regular database maintenance.
 
@@ -149,7 +189,7 @@ These operations help maintain query performance as the table grows.
 
 ---
 
-# How It Works
+## 🔄 How It Works
 
 The PostgreSQL provider participates in the idempotency workflow through the `IIdempotencyStorage` abstraction.
 
@@ -177,7 +217,7 @@ The middleware coordinates the workflow while the PostgreSQL provider is respons
 
 ---
 
-# When to Use PostgreSQL
+## 🧩 When to Use PostgreSQL
 
 The PostgreSQL provider is recommended when:
 
@@ -188,7 +228,7 @@ The PostgreSQL provider is recommended when:
 
 ---
 
-# Performance Considerations
+## ⏱️ Performance Considerations
 
 Compared to in-memory or Redis-based storage, PostgreSQL typically provides:
 
@@ -201,7 +241,7 @@ Choose the provider that best matches your application's consistency and perform
 
 ---
 
-# Limitations
+## ⚠️ Limitations
 
 Keep the following considerations in mind:
 
@@ -211,7 +251,7 @@ Keep the following considerations in mind:
 
 ---
 
-# Related Documentation
+## 📚 Related Documentation
 
 - Getting Started
 - Configuration

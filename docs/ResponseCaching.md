@@ -10,7 +10,7 @@ This replays persisted responses while returning deterministic responses across 
 
 ---
 
-# How It Works
+## 🔄 How It Works
 
 When an incoming request reaches the middleware, the following sequence occurs.
 
@@ -47,7 +47,7 @@ Response    Exception
 
 ---
 
-# What Is Stored?
+## 💾 What Is Stored?
 
 The middleware persists all the information required to faithfully reproduce the original response.
 
@@ -64,7 +64,7 @@ The storage format is implementation-specific, but every provider persists the s
 
 ---
 
-# First Request
+## 🆕 First Request
 
 The first request executes normally.
 
@@ -91,7 +91,7 @@ Return Response
 
 ---
 
-# Duplicate Request
+## ♻️ Duplicate Request
 
 If the same request is received again using the same idempotency key and the same request fingerprint:
 
@@ -118,7 +118,7 @@ This avoids duplicate business operations while significantly reducing processin
 
 ---
 
-# Fingerprint Validation
+## 🔐 Fingerprint Validation
 
 Before replaying a stored response, the middleware compares the incoming request fingerprint with the persisted fingerprint.
 
@@ -132,7 +132,7 @@ See **Fingerprinting** for implementation details.
 
 ---
 
-# Response Expiration
+## ⏳ Response Expiration
 
 Stored responses remain available until the configured expiration period elapses.
 
@@ -149,7 +149,7 @@ Once the entry expires:
 
 ---
 
-# Cacheable Status Codes
+## 📋 Cacheable Status Codes
 
 By default, the middleware persists successful responses.
 
@@ -170,7 +170,7 @@ options.RemoveCacheableStatusCodes(202);
 
 ---
 
-# Storage Independence
+## 🧩 Storage Independence
 
 Response replay is completely independent of the persistence technology.
 
@@ -184,7 +184,7 @@ the replay behavior remains exactly the same because every provider implements t
 
 ---
 
-# Best Practices
+## ✅ Best Practices
 
 - Enable response replay only for operations that modify application state.
 - Configure an expiration period appropriate for your business process.
@@ -194,7 +194,7 @@ the replay behavior remains exactly the same because every provider implements t
 
 ---
 
-# Related Documentation
+## 📚 Related Documentation
 
 - Architecture
 - Configuration

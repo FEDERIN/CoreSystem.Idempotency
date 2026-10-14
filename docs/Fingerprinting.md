@@ -8,7 +8,7 @@ If another request later uses the same idempotency key but produces a different 
 
 ---
 
-# Why Fingerprinting?
+## ❓ Why Fingerprinting?
 
 Without fingerprint validation, an idempotency key could be unintentionally reused for a completely different business operation.
 
@@ -42,7 +42,7 @@ Fingerprint validation detects the change and prevents the second request from b
 
 ---
 
-# How It Works
+## 🔄 How It Works
 
 For every incoming request, the middleware performs the following steps:
 
@@ -69,7 +69,7 @@ flowchart TD
 
 ---
 
-# What Is Included?
+## 📦 What Is Included?
 
 By default, the fingerprint is generated from:
 
@@ -87,7 +87,7 @@ These values uniquely identify the logical operation represented by the request.
 
 ---
 
-# Customizing the Fingerprint
+## 🔧 Customizing the Fingerprint
 
 Fingerprint generation can be customized through `FingerprintOptions`.
 
@@ -108,7 +108,7 @@ Only explicitly configured headers participate in fingerprint generation.
 
 ---
 
-# When Should Headers Be Included?
+## 🏷️ When Should Headers Be Included?
 
 Include request headers only when they define the business identity of the request.
 
@@ -129,7 +129,7 @@ Including volatile headers may cause legitimate retries to be treated as differe
 
 ---
 
-# Fingerprint Mismatch
+## 🚫 Fingerprint Mismatch
 
 If an existing idempotency entry is found but its fingerprint differs from the incoming request, the middleware throws an `IdempotencyFingerprintMismatchException`.
 
@@ -141,7 +141,7 @@ See **Errors → Fingerprint Mismatch** for implementation guidance.
 
 ---
 
-# Configuration
+## ⚙️ Configuration
 
 The fingerprint can be customized through the `Fingerprint` section of `IdempotencyOptions`.
 
@@ -162,7 +162,7 @@ For the complete list of available options, see **Configuration**.
 
 ---
 
-# Best Practices
+## ✅ Best Practices
 
 - Generate a unique idempotency key for every logical operation.
 - Keep the default fingerprint configuration whenever possible.

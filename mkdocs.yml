@@ -1,7 +1,7 @@
 site_name: CoreSystem.Idempotency
 site_description: Production-ready idempotency libraries for modern .NET applications
 site_author: Federin Pastor Gutierrez Ortiz
-site_url: https://federin.github.io/CoreSystem.idempotency/
+site_url: https://federin.github.io/CoreSystem.Idempotency/
 
 repo_name: FEDERIN/CoreSystem.Idempotency
 repo_url: https://github.com/FEDERIN/CoreSystem.Idempotency
