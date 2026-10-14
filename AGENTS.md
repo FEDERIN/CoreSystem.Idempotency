@@ -213,9 +213,8 @@ Rules and caveats:
 - `publish.yml` resolves the project from `src/<project>/<project>.csproj` and needs a `case`
   entry mapping that project to its test projects. **A new package requires a new `case` entry
   there**, otherwise the publish job fails with "No test-project mapping exists".
-- `publish-package.bat` is stale: it was copied from the CoreSystem.Cache repo and still
-  references `CoreSystem.Cache.sln` / `Core.Cache.*` projects. Use the commands in this
-  document instead. (`generate-lock-files.bat` has been corrected for this repository.)
+- `publish-package.bat` and `generate-lock-files.bat` are local helpers (gitignored). Both are
+  adapted to `CoreSystem.Idempotency`; edit the `case` block when adding a new provider.
 - Note that both `.bat` files are ignored by `.gitignore` (`*.bat`), so they are local
   helpers and never reach other clones.
 
