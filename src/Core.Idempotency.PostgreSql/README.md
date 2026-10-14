@@ -1,5 +1,4 @@
-# 🐘 CoreSystem.Idempotency.PostgreSql
-
+# ⚡ CoreSystem.Idempotency.PostgreSql
 > **PostgreSQL storage provider for CoreSystem.Idempotency, built on the `IIdempotencyStorage` abstraction.**
 
 It is recommended for applications that require transactional consistency and long-lived storage.
@@ -92,6 +91,8 @@ CREATE DATABASE idempotency_db;
 ```
 
 Then apply the schema script shipped inside the package at `scripts/postgres.sql`.
+To extract it from the installed package, locate the package directory under
+`~/.nuget/packages/coresystem.idempotency.postgresql/<version>/scripts/postgres.sql`.
 
 ```bash
 psql -h localhost -U admin -d idempotency_db -f scripts/postgres.sql

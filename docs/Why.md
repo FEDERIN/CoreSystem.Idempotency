@@ -53,14 +53,14 @@ This architecture allows applications to switch persistence technologies—or in
 
 | Package | Responsibility |
 |----------|----------------|
-| **CoreSystem.Idempotency** | Middleware, request fingerprinting, response replay, storage abstractions, and orchestration |
-| **CoreSystem.Idempotency.Redis** | Redis storage provider |
-| **CoreSystem.Idempotency.PostgreSql** | PostgreSQL storage provider |
-| **CoreSystem.Serialization** | Serialization infrastructure |
-| **CoreSystem.Http** | HTTP abstractions |
-| **CoreSystem.Redis** | Redis connectivity infrastructure |
-| **CoreSystem.Observability** *(Optional)* | OpenTelemetry integration |
-| **CoreSystem.Observability.Abstractions** | Shared observability contracts |
+| [**CoreSystem.Idempotency**](https://www.nuget.org/packages/CoreSystem.Idempotency) | Middleware, request fingerprinting, response replay, storage abstractions, and orchestration |
+| [**CoreSystem.Idempotency.Redis**](https://www.nuget.org/packages/CoreSystem.Idempotency.Redis) | Redis storage provider |
+| [**CoreSystem.Idempotency.PostgreSql**](https://www.nuget.org/packages/CoreSystem.Idempotency.PostgreSql) | PostgreSQL storage provider |
+| [**CoreSystem.Serialization**](https://www.nuget.org/packages/CoreSystem.Serialization) | Serialization infrastructure |
+| [**CoreSystem.Http**](https://www.nuget.org/packages/CoreSystem.Http) | HTTP abstractions |
+| [**CoreSystem.Redis**](https://www.nuget.org/packages/CoreSystem.Redis) | Redis connectivity infrastructure |
+| [**CoreSystem.Observability**](https://www.nuget.org/packages/CoreSystem.Observability) *(Optional)* | OpenTelemetry integration |
+| [**CoreSystem.Observability.Abstractions**](https://www.nuget.org/packages/CoreSystem.Observability.Abstractions) | Shared observability contracts |
 
 Applications depend only on the CoreSystem.Idempotency API while selecting the storage provider that best fits their environment.
 

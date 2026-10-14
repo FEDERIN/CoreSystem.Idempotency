@@ -35,14 +35,14 @@ Storage providers are distributed as independent packages.
 
 | Package | Responsibility |
 |----------|----------------|
-| **CoreSystem.Idempotency** | Middleware, request fingerprinting, response replay, storage abstractions, and orchestration |
-| **CoreSystem.Idempotency.Redis** | Redis storage provider |
-| **CoreSystem.Idempotency.PostgreSql** | PostgreSQL storage provider |
-| **CoreSystem.Serialization** | JSON, MessagePack, and Protocol Buffers serialization |
-| **CoreSystem.Http** | HTTP abstractions used by the middleware |
-| **CoreSystem.Redis** | Redis connectivity infrastructure used by the Redis provider |
-| **CoreSystem.Observability** *(Optional)* | OpenTelemetry metrics, tracing, and diagnostics |
-| **CoreSystem.Observability.Abstractions** | Shared observability contracts |
+| [**CoreSystem.Idempotency**](https://www.nuget.org/packages/CoreSystem.Idempotency) | Middleware, request fingerprinting, response replay, storage abstractions, and orchestration |
+| [**CoreSystem.Idempotency.Redis**](https://www.nuget.org/packages/CoreSystem.Idempotency.Redis) | Redis storage provider |
+| [**CoreSystem.Idempotency.PostgreSql**](https://www.nuget.org/packages/CoreSystem.Idempotency.PostgreSql) | PostgreSQL storage provider |
+| [**CoreSystem.Serialization**](https://www.nuget.org/packages/CoreSystem.Serialization) | JSON, MessagePack, and Protocol Buffers serialization |
+| [**CoreSystem.Http**](https://www.nuget.org/packages/CoreSystem.Http) | HTTP abstractions used by the middleware |
+| [**CoreSystem.Redis**](https://www.nuget.org/packages/CoreSystem.Redis) | Redis connectivity infrastructure used by the Redis provider |
+| [**CoreSystem.Observability**](https://www.nuget.org/packages/CoreSystem.Observability) *(Optional)* | OpenTelemetry metrics, tracing, and diagnostics |
+| [**CoreSystem.Observability.Abstractions**](https://www.nuget.org/packages/CoreSystem.Observability.Abstractions) | Shared observability contracts |
 
 > **CoreSystem.Idempotency** requires a storage provider.
 >

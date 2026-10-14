@@ -1,4 +1,4 @@
-# 🔴 CoreSystem.Idempotency.Redis
+# ⚡ CoreSystem.Idempotency.Redis
 
 > **Redis storage provider for CoreSystem.Idempotency, built on the `IIdempotencyStorage` abstraction.**
 

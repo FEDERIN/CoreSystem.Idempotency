@@ -36,8 +36,8 @@ dotnet add package CoreSystem.Idempotency
 
 | Package | Purpose |
 |---------|---------|
-| **CoreSystem.Idempotency.Redis** | Redis-based distributed storage |
-| **CoreSystem.Idempotency.PostgreSql** | PostgreSQL-based durable storage |
+| [**CoreSystem.Idempotency.Redis**](https://www.nuget.org/packages/CoreSystem.Idempotency.Redis) | Redis-based distributed storage |
+| [**CoreSystem.Idempotency.PostgreSql**](https://www.nuget.org/packages/CoreSystem.Idempotency.PostgreSql) | PostgreSQL-based durable storage |
 
 Additional providers can be implemented through the `IIdempotencyStorage` abstraction.
 

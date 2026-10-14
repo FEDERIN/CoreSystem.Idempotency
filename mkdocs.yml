@@ -42,6 +42,7 @@ nav:
       - Fingerprinting: Fingerprinting.md
       - Response Replay: ResponseCaching.md
       - Configuration: Configuration.md
+      - Storage Providers: Storage.md
       - Providers:
           - Redis: Providers/Redis.md
           - PostgreSQL: Providers/PostgreSQL.md
