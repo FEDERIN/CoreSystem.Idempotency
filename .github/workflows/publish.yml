@@ -14,12 +14,12 @@ jobs:
   build-and-publish:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '8.0.x' 
 
       - name: Extract info
         run: |
@@ -27,7 +27,7 @@ jobs:
           PROJECT_NAME=$(echo "$GITHUB_REF_NAME" | cut -d'/' -f1)
           # Extract version (after the '/') and remove the 'v' prefix
           VERSION=$(echo "$GITHUB_REF_NAME" | cut -d'/' -f2 | sed 's/^v//')
-
+          
           echo "PROJECT=$PROJECT_NAME" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
@@ -84,10 +84,7 @@ jobs:
           dotnet build "$PROJECT_PATH" \
             --configuration Release \
             --no-restore \
-            /p:Version=$VERSION \
-            /p:AssemblyVersion=$VERSION \
-            /p:FileVersion=$VERSION \
-            /p:InformationalVersion=$VERSION
+            /p:Version=$VERSION
 
       - name: Test package project
         run: |
@@ -95,10 +92,7 @@ jobs:
             dotnet test "$test_project" \
               --configuration Release \
               --no-restore \
-              /p:Version=$VERSION \
-              /p:AssemblyVersion=$VERSION \
-              /p:FileVersion=$VERSION \
-              /p:InformationalVersion=$VERSION
+              /p:Version=$VERSION
           done
 
       - name: Pack package
@@ -107,9 +101,6 @@ jobs:
           dotnet pack "$PROJECT_PATH" \
             --configuration Release \
             /p:Version=$VERSION \
-            /p:AssemblyVersion=$VERSION \
-            /p:FileVersion=$VERSION \
-            /p:InformationalVersion=$VERSION \
             --no-build \
             --no-restore \
             --output ./nupkgs
@@ -140,8 +131,6 @@ jobs:
           user: ${{ secrets.NUGET_USER }}
 
       - name: Publish to NuGet
-        env:
-          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: |
           # No --skip-duplicate. It downgrades a 409 Conflict to a warning, so a
           # re-run of an already published version would report success while
@@ -149,26 +138,20 @@ jobs:
           # means the version is already live and this run is redundant: fail
           # loudly instead of pretending to publish.
           dotnet nuget push "$PACKAGE_PATH" \
-            --api-key "$NUGET_API_KEY" \
+            --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" \
             --source "https://api.nuget.org/v3/index.json"
 
       - name: Configure GitHub Packages
-        env:
-          GITHUB_USERNAME: ${{ github.actor }}
-          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           dotnet nuget add source \
-            --username "$GITHUB_USERNAME" \
-            --password "$GITHUB_TOKEN" \
+            --username "${{ github.actor }}" \
+            --password "${{ secrets.GITHUB_TOKEN }}" \
             --store-password-in-clear-text \
             --name github \
-            "https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json"
+            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
 
       - name: Publish to GitHub Packages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           dotnet nuget push "$PACKAGE_PATH" \
             --source github \
-            --api-key "$GITHUB_TOKEN"
+            --api-key "${{ secrets.GITHUB_TOKEN }}"
