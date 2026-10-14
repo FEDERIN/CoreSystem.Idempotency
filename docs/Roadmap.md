@@ -13,9 +13,9 @@ publishes XML documentation and debug symbols, and corrects the package metadata
 
 | Package | Version |
 |---------|:-------:|
-| `CoreSystem.Idempotency` | 2.0.1 |
-| `CoreSystem.Idempotency.Redis` | 2.0.1 |
-| `CoreSystem.Idempotency.PostgreSql` | 2.0.1 |
+| [**CoreSystem.Idempotency**](https://www.nuget.org/packages/CoreSystem.Idempotency) | 2.0.1 |
+| [**CoreSystem.Idempotency.Redis**](https://www.nuget.org/packages/CoreSystem.Idempotency.Redis) | 2.0.1 |
+| [**CoreSystem.Idempotency.PostgreSql**](https://www.nuget.org/packages/CoreSystem.Idempotency.PostgreSql) | 2.0.1 |
 
 See the changelog for the full list.
 

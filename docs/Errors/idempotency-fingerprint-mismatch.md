@@ -1,6 +1,6 @@
 # 🚫 Idempotency Fingerprint Mismatch
 
-**HTTP Status:** `409 Conflict`
+**HTTP Status:** `409 Conflict` — returned by your application, not written by the library
 
 **Exception**
 
@@ -138,13 +138,27 @@ internal sealed class IdempotencyExceptionHandler(
 }
 ```
 
-Register the exception handler during application startup.
+Register the exception handler and the exception handling middleware during startup:
 
 ```csharp
+builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<IdempotencyExceptionHandler>();
 ```
 
+```csharp
+app.UseExceptionHandler();
+```
+
 > **Note**
+>
+> The handler uses `IProblemDetailsService` to write the response. If your application
+> already provides that service, the `AddProblemDetails()` call is redundant — for example
+> **CoreSystem.Http.ProblemDetails** registers it through `AddCoreProblemDetails()`, which
+> also exposes a `CustomizeProblemDetails` hook that can add the `idempotencyKey` extension
+> without a custom `IExceptionHandler`.
+>
+> `app.UseExceptionHandler()` is what actually invokes the handler. Without it the
+> exception escapes and the response is a generic `500` rather than the `409` shown above.
 >
 > Applications that already implement a centralized exception handling pipeline (for example, a custom exception middleware or exception mapper) can map `IdempotencyFingerprintMismatchException` using their existing infrastructure instead of registering this handler.
 

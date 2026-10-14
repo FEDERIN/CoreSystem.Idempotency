@@ -35,13 +35,39 @@ The framework can also be configured using `appsettings.json`.
 
 ## ⚙️ Configuration Options
 
+### ⚙️ IdempotencyOptions
+
 | Option | Description | Default |
 |----------|-------------|---------|
 | `Enabled` | Enables or disables the middleware | `true` |
-| `InstanceName` | Optional prefix used by storage providers | `null` |
+| `InstanceName` | Optional prefix applied to all generated cache keys | `null` |
+| `MaxIdempotencyKeyLength` | Maximum length accepted for a client supplied idempotency key | `128` |
+| `ScopeResolver` | Resolves an application specific scope, such as a tenant or user. Defaults to `InstanceName` plus the request host | `null` |
 | `Expiration` | Lifetime of persisted responses | `30 minutes` |
+| `InProgressExpiration` | Maximum time a request may own a key while executing. Requests arriving during this period receive a conflict | `2 minutes` |
+| `MaxRequestBodySizeBytes` | Maximum request body size fingerprinted by the middleware | `65536` (64 KB) |
+| `MaxResponseBodySizeBytes` | Maximum response body size retained for replay | `262144` (256 KB) |
+| `ExcludedContentTypePrefixes` | Content type prefixes excluded from processing | `multipart/` |
 | `AllowedMethods` | HTTP methods protected by the middleware | `POST`, `PUT` |
-| `Fingerprint` | Request fingerprint generation options | Default configuration |
+| `CacheableStatusCodes` | Status codes stored and replayed for later requests | `200`, `201`, `202`, `204` |
+| `Fingerprint` | Request fingerprint options, see below | Default configuration |
+
+### ⚙️ FingerprintOptions
+
+| Option | Description | Default |
+|----------|-------------|---------|
+| `Enabled` | Enables request fingerprint validation | `true` |
+| `IncludeQueryString` | Includes the query string in the fingerprint | `false` |
+| `IncludeContentType` | Includes the `Content-Type` header in the fingerprint | `true` |
+| `IncludedHeaders` | Additional request headers to include. Names are matched case-insensitively | empty |
+
+> **Note**
+>
+> `AllowedMethods`, `CacheableStatusCodes`, `ExcludedContentTypePrefixes` and
+> `IncludedHeaders` expose no setter. Mutate them through the helper
+> methods — `AddAllowedMethods`, `RemoveAllowedMethods`, `AddCacheableStatusCodes`,
+> `RemoveCacheableStatusCodes` — or by binding from configuration. Methods are
+> normalised to upper case.
 
 ---
 
