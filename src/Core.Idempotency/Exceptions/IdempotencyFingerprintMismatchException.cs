@@ -7,8 +7,10 @@
 public sealed class IdempotencyFingerprintMismatchException : Exception
 {
     /// <summary>
-    /// Stable machine-readable code identifying this error, exposed as the
-    /// problem details <c>code</c> member.
+    /// Stable machine-readable code identifying this error. The framework does
+    /// not write this value to the response; an application that chooses to
+    /// expose a problem details <c>code</c> member is responsible for
+    /// including it.
     /// </summary>
     public const string Code = "IDEMPOTENCY_FINGERPRINT_MISMATCH";
 

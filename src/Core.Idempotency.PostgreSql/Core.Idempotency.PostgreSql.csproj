@@ -10,10 +10,23 @@
 
 		<PackageId>CoreSystem.Idempotency.PostgreSql</PackageId>
 
-		<Version>2.0.0</Version>
-		<AssemblyVersion>2.0.0</AssemblyVersion>
-		<FileVersion>2.0.0.0</FileVersion>
-		<InformationalVersion>2.0.0</InformationalVersion>
+		<Version>2.0.1</Version>
+		<AssemblyVersion>2.0.1</AssemblyVersion>
+		<FileVersion>2.0.1.0</FileVersion>
+		<InformationalVersion>2.0.1</InformationalVersion>
+
+		<PackageReleaseNotes>
+			Corrections release. 2.0.0 shipped documentation that did not compile and a
+			schema that was missing columns:
+			- AddCoreIdempotencyPostgreSql was documented as parameterless, but it requires
+			  a configuration delegate.
+			The provider never created its schema. The documented idempotency_keys table
+			  predated the lease contract, omitting state and lease_id, and failed on the
+			  first request.
+			The package now ships scripts/postgres.sql so consumers can create the table.
+			Also: XML documentation is published, SourceLink is enabled, and the package
+			metadata URLs were corrected.
+		</PackageReleaseNotes>
 
 		<Authors>Federin Pastor Gutierrez Ortiz</Authors>
 

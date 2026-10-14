@@ -41,7 +41,7 @@ public static class IdempotencyRegistration
         {
             return services;
         }
-        
+
         services.AddCoreSerialization(serialization =>
             {
                 serialization.DefaultSerializer = SerializerType.Json;
@@ -73,7 +73,7 @@ public static class IdempotencyRegistration
     {
         ArgumentNullException.ThrowIfNull(app);
 
-        var options = app.ApplicationServices.GetService<IdempotencyOptions>() 
+        var options = app.ApplicationServices.GetService<IdempotencyOptions>()
             ?? throw new InvalidOperationException(
                 IdempotencyMessages.MissingRegistration);
 

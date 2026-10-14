@@ -21,6 +21,33 @@ public sealed class HeaderIdempotencyKeyResolverTests
         resolver.TryResolve(whitespace, out _).Should().BeFalse();
     }
 
+    [Theory]
+    [InlineData(129, false)]
+    [InlineData(128, true)]
+    [InlineData(1, true)]
+    public void TryResolve_Should_Enforce_MaxIdempotencyKeyLength(int keyLength, bool expected)
+    {
+        var resolver = CreateResolver(options => options.MaxIdempotencyKeyLength = 128);
+        var context = new DefaultHttpContext();
+        context.Request.Method = HttpMethods.Post;
+        context.Request.Path = "/orders";
+        context.Request.Headers["Idempotency-Key"] = new string('a', keyLength);
+
+        resolver.TryResolve(context, out _).Should().Be(expected);
+    }
+
+    [Fact]
+    public void TryResolve_Should_Reject_Key_Longer_Than_Custom_Max()
+    {
+        var resolver = CreateResolver(options => options.MaxIdempotencyKeyLength = 10);
+        var context = new DefaultHttpContext();
+        context.Request.Method = HttpMethods.Post;
+        context.Request.Path = "/orders";
+        context.Request.Headers["Idempotency-Key"] = new string('a', 11);
+
+        resolver.TryResolve(context, out _).Should().BeFalse();
+    }
+
     [Fact]
     public void TryResolve_Should_Isolate_Tenants_And_Routes()
     {
