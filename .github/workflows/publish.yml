@@ -140,6 +140,8 @@ jobs:
           user: ${{ secrets.NUGET_USER }}
 
       - name: Publish to NuGet
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
         run: |
           # No --skip-duplicate. It downgrades a 409 Conflict to a warning, so a
           # re-run of an already published version would report success while
@@ -147,20 +149,26 @@ jobs:
           # means the version is already live and this run is redundant: fail
           # loudly instead of pretending to publish.
           dotnet nuget push "$PACKAGE_PATH" \
-            --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" \
+            --api-key "$NUGET_API_KEY" \
             --source "https://api.nuget.org/v3/index.json"
 
       - name: Configure GitHub Packages
+        env:
+          GITHUB_USERNAME: ${{ github.actor }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           dotnet nuget add source \
-            --username "${{ github.actor }}" \
-            --password "${{ secrets.GITHUB_TOKEN }}" \
+            --username "$GITHUB_USERNAME" \
+            --password "$GITHUB_TOKEN" \
             --store-password-in-clear-text \
             --name github \
-            "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json"
+            "https://nuget.pkg.github.com/$GITHUB_REPOSITORY_OWNER/index.json"
 
       - name: Publish to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           dotnet nuget push "$PACKAGE_PATH" \
             --source github \
-            --api-key "${{ secrets.GITHUB_TOKEN }}"
+            --api-key "$GITHUB_TOKEN"
