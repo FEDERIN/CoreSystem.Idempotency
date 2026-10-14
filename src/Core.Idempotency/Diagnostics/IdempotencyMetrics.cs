@@ -19,6 +19,11 @@ public sealed class IdempotencyMetrics
     private readonly Histogram<double>? _storageWriteDuration;
     private readonly Histogram<long>? _payloadSize;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="IdempotencyMetrics"/> class and
+    /// creates the instruments it publishes.
+    /// </summary>
+    /// <param name="meterFactory">Factory used to create the idempotency meter.</param>
     public IdempotencyMetrics(IMeterFactory meterFactory)
     {
         var meter = meterFactory.Create(
@@ -66,24 +71,36 @@ public sealed class IdempotencyMetrics
             description: "Serialized response payload size.");
     }
 
+    /// <summary>Records a request that entered idempotency processing.</summary>
     public void RecordRequest() =>
         _requestCounter?.Add(1);
 
+    /// <summary>Records a request served from an existing stored entry.</summary>
     public void RecordHit() =>
         _cacheHitCounter?.Add(1);
 
+    /// <summary>Records a request with no stored entry, which must execute the endpoint.</summary>
     public void RecordMiss() =>
         _cacheMissCounter?.Add(1);
 
+    /// <summary>Records a stored response replayed to a duplicate request.</summary>
     public void RecordReplay() =>
         _replayCounter?.Add(1);
 
+    /// <summary>Records a response persisted to storage.</summary>
+    /// <param name="provider">Identifier of the storage provider, used as a metric tag.</param>
     public void RecordStorageWrite(string provider) =>
         _storageWriteCounter?.Add(1, new TagList { { "provider", provider } });
 
+    /// <summary>Records the duration of a storage read.</summary>
+    /// <param name="milliseconds">Elapsed time of the read, in milliseconds.</param>
+    /// <param name="provider">Identifier of the storage provider, used as a metric tag.</param>
     public void RecordStorageReadDuration(double milliseconds, string provider) =>
         _storageReadDuration?.Record(milliseconds, new TagList { { "provider", provider } });
 
+    /// <summary>Records the duration of a storage write.</summary>
+    /// <param name="milliseconds">Elapsed time of the write, in milliseconds.</param>
+    /// <param name="provider">Identifier of the storage provider, used as a metric tag.</param>
     public void RecordStorageWriteDuration(double milliseconds, string provider) =>
         _storageWriteDuration?.Record(milliseconds, new TagList { { "provider", provider } });
 

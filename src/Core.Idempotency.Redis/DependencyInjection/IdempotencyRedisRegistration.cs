@@ -10,8 +10,27 @@ using StackExchange.Redis;
 
 namespace Core.Idempotency.Redis.DependencyInjection;
 
+/// <summary>
+/// Registration entry points for the Redis storage provider.
+/// </summary>
 public static class IdempotencyRedisRegistration
 {
+    /// <summary>
+    /// Registers Redis as the idempotency storage provider.
+    /// </summary>
+    /// <remarks>
+    /// <c>AddCoreIdempotency</c> must be called first. Assign
+    /// <see cref="RedisOptions.Configuration"/>; it is an
+    /// <c>Action&lt;ConfigurationOptions&gt;</c> and cannot be populated with
+    /// <c>Bind</c>, because configuration binding cannot construct a delegate.
+    /// </remarks>
+    /// <param name="services">The service collection to add to.</param>
+    /// <param name="configure">Callback used to configure the Redis connection.</param>
+    /// <returns>The same service collection, to allow chaining.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when <c>AddCoreIdempotency</c> has not been called, or when
+    /// <see cref="RedisOptions.Configuration"/> was left unassigned.
+    /// </exception>
     public static IServiceCollection AddCoreIdempotencyRedis(
         this IServiceCollection services,
         Action<RedisOptions> configure)

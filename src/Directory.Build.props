@@ -1,0 +1,35 @@
+<Project>
+
+  <!--
+    Shared NuGet metadata for the shipped packages.
+
+    Scoped to src/ on purpose. Enable GenerateDocumentationFile only where the
+    XML documentation actually ships; turning it on repo-wide would emit CS1591
+    across every test project for no consumer benefit.
+  -->
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+
+    <!--
+      Embed the PDB in the assembly instead of shipping a loose .pdb file.
+
+      SourceLink lives in the PDB, so without it consumers stepping through the
+      package from nuget.org land in decompiled code rather than the original
+      source. Embedding keeps the package to a single file per assembly and
+      needs no extra artifact or publish step, at the cost of a larger DLL.
+    -->
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- PrivateAssets: SourceLink is a build-time concern and must never become
+         a nuspec dependency of the published packages. -->
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
