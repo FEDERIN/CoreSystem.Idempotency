@@ -1,4 +1,4 @@
-# Idempotency Fingerprint Mismatch
+# 🚫 Idempotency Fingerprint Mismatch
 
 **HTTP Status:** `409 Conflict`
 
@@ -11,12 +11,12 @@ IdempotencyFingerprintMismatchException
 **Problem Details Type**
 
 ```text
-https://github.com/FEDERIN/CoreSystem/blob/main/docs/Idempotency/errors/idempotency-fingerprint-mismatch.md
+https://federin.github.io/CoreSystem.Idempotency/Errors/idempotency-fingerprint-mismatch/
 ```
 
 ---
 
-## Summary
+## 📋 Summary
 
 This error occurs when an incoming request reuses an existing **Idempotency-Key**, but the generated request fingerprint does not match the fingerprint originally associated with that key.
 
@@ -34,7 +34,7 @@ For safety, **CoreSystem.Idempotency** only allows an idempotency key to be reus
 
 ---
 
-## Example
+## 💡 Example
 
 The following request is processed successfully and stored.
 
@@ -73,7 +73,7 @@ Content-Type: application/problem+json
 
 ```json
 {
-  "type": "https://github.com/FEDERIN/CoreSystem/blob/main/docs/Idempotency/errors/idempotency-fingerprint-mismatch.md",
+  "type": "https://federin.github.io/CoreSystem.Idempotency/Errors/idempotency-fingerprint-mismatch/",
   "title": "Idempotency fingerprint mismatch",
   "status": 409,
   "detail": "The request fingerprint does not match the existing idempotency entry.",
@@ -88,7 +88,7 @@ Content-Type: application/problem+json
 
 ---
 
-## ASP.NET Core Integration
+## 🔌 ASP.NET Core Integration
 
 Applications using ASP.NET Core can translate the exception into an RFC 7807 **Problem Details** response by registering an `IExceptionHandler`.
 
@@ -150,7 +150,7 @@ builder.Services.AddExceptionHandler<IdempotencyExceptionHandler>();
 
 ---
 
-## Common Causes
+## 🔍 Common Causes
 
 This error is commonly caused by one of the following:
 
@@ -164,7 +164,7 @@ This error is commonly caused by one of the following:
 
 ---
 
-## Resolution
+## ✅ Resolution
 
 Choose one of the following approaches:
 
@@ -174,7 +174,7 @@ Choose one of the following approaches:
 
 ---
 
-## Why Is This Validation Required?
+## ❓ Why Is This Validation Required?
 
 An idempotency key represents a single logical operation.
 
@@ -194,7 +194,7 @@ Only when both values match can the previously stored response be safely replaye
 
 ---
 
-## Related Documentation
+## 📚 Related Documentation
 
 - Fingerprinting
 - Response Replay

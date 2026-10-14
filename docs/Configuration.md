@@ -18,7 +18,7 @@ You'll learn how to configure:
 
 ---
 
-# Configuration Overview
+## 📋 Configuration Overview
 
 Configure the framework using the `AddCoreIdempotency()` extension.
 
@@ -33,7 +33,7 @@ The framework can also be configured using `appsettings.json`.
 
 ---
 
-# Configuration Options
+## ⚙️ Configuration Options
 
 | Option | Description | Default |
 |----------|-------------|---------|
@@ -45,7 +45,7 @@ The framework can also be configured using `appsettings.json`.
 
 ---
 
-# Enable or Disable the Framework
+## 🔌 Enable or Disable the Framework
 
 Enable the middleware.
 
@@ -61,7 +61,7 @@ options.Enabled = false;
 
 ---
 
-# Instance Name
+## 🏷️ Instance Name
 
 `InstanceName` allows multiple applications or environments to safely share the same storage infrastructure.
 
@@ -80,7 +80,7 @@ Typical examples include:
 
 ---
 
-# Allowed HTTP Methods
+## 🛡️ Allowed HTTP Methods
 
 By default, the middleware protects:
 
@@ -106,7 +106,7 @@ Requests using methods that are not configured bypass the middleware.
 
 ---
 
-# Response Expiration
+## ⏳ Response Expiration
 
 Configure how long an idempotent response remains available for replay.
 
@@ -119,7 +119,7 @@ After the expiration period, the request is treated as a new operation.
 
 ---
 
-# Request Fingerprinting
+## 🔐 Request Fingerprinting
 
 Fingerprinting prevents an idempotency key from being reused with a different request.
 
@@ -143,7 +143,7 @@ See **Fingerprinting** for a complete description of every available option.
 
 ---
 
-# Using appsettings.json
+## 📄 Using appsettings.json
 
 ```json
 {
@@ -188,7 +188,7 @@ builder.Services.AddCoreIdempotency(options =>
 
 ---
 
-# Storage Provider Configuration
+## 💾 Storage Provider Configuration
 
 `CoreSystem.Idempotency` does not configure storage providers.
 
@@ -204,7 +204,11 @@ builder.Services
     })
     .AddCoreIdempotencyRedis(options =>
     {
-        // Redis configuration
+        options.Configuration = redis =>
+        {
+            redis.EndPoints.Add(
+                builder.Configuration.GetConnectionString("Redis")!);
+        };
     });
 ```
 
@@ -218,15 +222,23 @@ builder.Services
     })
     .AddCoreIdempotencyPostgreSql(options =>
     {
-        // PostgreSQL configuration
+        options.ConnectionString =
+            builder.Configuration.GetConnectionString("Idempotency");
     });
 ```
 
+> **Important**
+>
+> Both provider options types must be assigned explicitly. `RedisOptions.Configuration`
+> is an `Action<ConfigurationOptions>` delegate and `PostgreSqlOptions.ConnectionString`
+> is a plain string, so neither can be populated with `Bind`. Leaving either one unset
+> makes registration throw at startup.
+
 ---
 
-# Recommended Configurations
+## 💡 Recommended Configurations
 
-## Body limits
+## 📏 Body limits
 
 The middleware bypasses idempotency for requests larger than `MaxRequestBodySizeBytes` or with an excluded content type prefix. `multipart/` is excluded by default. Responses larger than `MaxResponseBodySizeBytes` are returned normally but are not persisted or replayable.
 
@@ -243,7 +255,7 @@ The response-capture implementation comes from `CoreSystem.Http`; applications t
 
 ---
 
-## Key scope and validation
+## 🏷️ Key scope and validation
 
 The default resolver accepts exactly one `Idempotency-Key`, rejects surrounding whitespace, and limits it to 128 characters. It derives an opaque storage key from the application instance, host, HTTP method, route, and client key.
 
@@ -261,7 +273,7 @@ Applications with a different scope model can replace `IIdempotencyKeyResolver`;
 
 ---
 
-## Development
+## 🧪 Development
 
 | Setting | Value |
 |----------|-------|
@@ -271,7 +283,7 @@ Applications with a different scope model can replace `IIdempotencyKeyResolver`;
 
 ---
 
-## Production
+## ✅ Production
 
 | Setting | Value |
 |----------|-------|
@@ -281,7 +293,7 @@ Applications with a different scope model can replace `IIdempotencyKeyResolver`;
 
 ---
 
-# Best Practices
+## ✅ Best Practices
 
 - Configure an `InstanceName` when multiple applications share the same storage.
 - Use UUIDs for idempotency keys.

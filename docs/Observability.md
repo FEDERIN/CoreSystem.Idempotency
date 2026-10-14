@@ -1,6 +1,6 @@
 # 📊 Observability
 
-## Storage metrics
+## 💾 Storage metrics
 
 `idempotency.payload.size` records the HTTP response body size in bytes (`By`), regardless of whether Redis or PostgreSQL stores additional serialized metadata. Storage write counters and read/write duration histograms include a `provider` tag (`redis` or `postgresql`) so they can be compared and filtered consistently.
 
@@ -12,7 +12,7 @@ Observability is implemented by the middleware itself, providing consistent metr
 
 ---
 
-# Why Observability Matters
+## ❓ Why Observability Matters
 
 Idempotency protects critical business operations, but understanding how those operations behave in production is equally important.
 
@@ -29,7 +29,7 @@ Built-in telemetry helps answer questions such as:
 
 ---
 
-# Architecture
+## 🏗️ Architecture
 
 ```mermaid
 flowchart LR
@@ -51,7 +51,7 @@ flowchart LR
 
 ---
 
-# Built-in Metrics
+## 📊 Built-in Metrics
 
 The framework automatically publishes the following metrics.
 
@@ -68,9 +68,9 @@ The framework automatically publishes the following metrics.
 
 ---
 
-# Understanding the Metrics
+## 📖 Understanding the Metrics
 
-## Request Flow
+## 🔄 Request Flow
 
 Every idempotent request increments:
 
@@ -99,7 +99,7 @@ idempotency.storage.writes
 
 ---
 
-## Storage Performance
+## ⏱️ Storage Performance
 
 The framework measures storage latency using histograms.
 
@@ -112,7 +112,7 @@ These metrics help identify slow persistence operations regardless of the config
 
 ---
 
-## Payload Size
+## 📐 Payload Size
 
 The middleware records the size of every persisted response.
 
@@ -128,7 +128,7 @@ This metric is useful for:
 
 ---
 
-# Storage Provider Metrics
+## 💾 Storage Provider Metrics
 
 Storage providers contribute to the same metric set exposed by CoreSystem.Idempotency.
 
@@ -138,7 +138,7 @@ This allows dashboards, alerts, and monitoring rules to remain unchanged when sw
 
 ---
 
-# Registering the Meter
+## 🔌 Registering the Meter
 
 The framework publishes the following OpenTelemetry meter.
 
@@ -159,7 +159,7 @@ builder.Services
 
 ---
 
-# Compatible Platforms
+## 🔗 Compatible Platforms
 
 The published metrics can be exported to any OTLP-compatible backend.
 
@@ -175,7 +175,7 @@ The published metrics can be exported to any OTLP-compatible backend.
 
 ---
 
-# Example Dashboard
+## 📈 Example Dashboard
 
 Typical dashboards include:
 
@@ -192,7 +192,7 @@ Typical dashboards include:
 
 ---
 
-# Best Practices
+## ✅ Best Practices
 
 - Monitor the cache hit/miss ratio.
 - Track response replay frequency.
@@ -204,7 +204,7 @@ Typical dashboards include:
 
 ---
 
-# Related Documentation
+## 📚 Related Documentation
 
 - Configuration
 - Architecture

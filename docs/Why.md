@@ -12,7 +12,7 @@ CoreSystem.Idempotency provides a unified, provider-based idempotency platform t
 
 ---
 
-# The Problem
+## ⚠️ The Problem
 
 Modern distributed applications commonly require capabilities such as:
 
@@ -29,7 +29,7 @@ Although these requirements are common, they are often implemented differently i
 
 ---
 
-# The Solution
+## 💡 The Solution
 
 CoreSystem.Idempotency acts as the orchestration layer of the CoreSystem idempotency ecosystem.
 
@@ -49,7 +49,7 @@ This architecture allows applications to switch persistence technologies—or in
 
 ---
 
-# Package Architecture
+## 🏛️ Package Architecture
 
 | Package | Responsibility |
 |----------|----------------|
@@ -66,11 +66,11 @@ Applications depend only on the CoreSystem.Idempotency API while selecting the s
 
 ---
 
-# Benefits
+## 📈 Benefits
 
 Using CoreSystem.Idempotency provides several advantages.
 
-## Reliability
+## 🛡️ Reliability
 
 - Concurrent duplicate suppression for critical operations.
 - Automatic response replay.
@@ -79,7 +79,7 @@ Using CoreSystem.Idempotency provides several advantages.
 
 ---
 
-## Extensibility
+## 🧩 Extensibility
 
 - Provider-independent architecture.
 - Pluggable storage providers.
@@ -88,7 +88,7 @@ Using CoreSystem.Idempotency provides several advantages.
 
 ---
 
-## Operational Excellence
+## 📊 Operational Excellence
 
 - Built-in OpenTelemetry metrics.
 - Consistent serialization across providers.
@@ -97,7 +97,7 @@ Using CoreSystem.Idempotency provides several advantages.
 
 ---
 
-# When Should You Use CoreSystem.Idempotency?
+## 🎯 When Should You Use CoreSystem.Idempotency?
 
 CoreSystem.Idempotency is recommended for applications that expose state-changing operations, including:
 
@@ -114,7 +114,7 @@ If duplicate execution could produce inconsistent business results, idempotency 
 
 ---
 
-# Why a Provider-Based Architecture?
+## ❓ Why a Provider-Based Architecture?
 
 Separating the middleware from persistence provides several advantages.
 
@@ -128,7 +128,7 @@ This architecture keeps CoreSystem.Idempotency focused on coordinating idempoten
 
 ---
 
-# Next Steps
+## 🧭 Next Steps
 
 Continue with the following guides to learn more:
 

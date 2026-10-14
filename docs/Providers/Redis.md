@@ -6,7 +6,7 @@ It stores idempotency entries in a distributed cache, making it the recommended 
 
 ---
 
-# Why Redis?
+## ❓ Why Redis?
 
 Choose the Redis provider when your application requires:
 
@@ -20,7 +20,7 @@ If long-term durability is your primary requirement, consider the **PostgreSQL p
 
 ---
 
-# Requirements
+## 📋 Requirements
 
 Before using the provider, ensure you have:
 
@@ -31,7 +31,7 @@ Before using the provider, ensure you have:
 
 ---
 
-# Installation
+## 📦 Installation
 
 Install the provider package.
 
@@ -57,15 +57,43 @@ Then register the Redis provider.
 builder.Services
     .AddCoreIdempotencyRedis(options =>
     {
-        builder.Configuration
-            .GetSection("ConnectionStrings")
-            .Bind(options);
+        options.Configuration = redis =>
+        {
+            redis.EndPoints.Add(
+                builder.Configuration.GetConnectionString("Redis")!);
+        };
+    });
+```
+
+> **Important**
+>
+> `RedisOptions.Configuration` is an `Action<ConfigurationOptions>` delegate, not a
+> string. It cannot be populated with `Bind`, because configuration binding has no way
+> to construct a delegate. Assign the property explicitly instead, as shown above.
+>
+> If you leave `Configuration` unassigned, registration throws
+> `InvalidOperationException` reporting that a Redis configuration is required.
+
+The delegate receives a `StackExchange.Redis.ConfigurationOptions` instance, so every
+StackExchange.Redis setting is available, not just the endpoint. To also set a password
+and a database:
+
+```csharp
+builder.Services
+    .AddCoreIdempotencyRedis(options =>
+    {
+        options.Configuration = redis =>
+        {
+            redis.EndPoints.Add("redis.internal:6380");
+            redis.Password = builder.Configuration["Redis:Password"];
+            redis.DefaultDatabase = 0;
+        };
     });
 ```
 
 ---
 
-# Connection String
+## 🔗 Connection String
 
 Configure the Redis connection string.
 
@@ -77,9 +105,13 @@ Configure the Redis connection string.
 }
 ```
 
+The key name is a convention, not a requirement of the provider. Whichever name you use
+must match the one passed to `GetConnectionString` inside the `Configuration` delegate
+shown above.
+
 ---
 
-# How It Works
+## 🔄 How It Works
 
 The Redis provider participates in the idempotency workflow through the `IIdempotencyStorage` abstraction.
 
@@ -107,7 +139,7 @@ The middleware coordinates the workflow while the Redis provider is responsible 
 
 ---
 
-# Expiration
+## ⏳ Expiration
 
 Stored responses automatically expire after the configured expiration period.
 
@@ -124,7 +156,7 @@ Once an entry expires:
 
 ---
 
-# Production Recommendations
+## ✅ Production Recommendations
 
 For production environments, consider the following recommendations.
 
@@ -136,7 +168,7 @@ For production environments, consider the following recommendations.
 
 ---
 
-# Performance Characteristics
+## ⏱️ Performance Characteristics
 
 Redis is optimized for high-throughput, low-latency workloads.
 
@@ -152,7 +184,7 @@ This makes Redis an excellent default choice for most distributed APIs.
 
 ---
 
-# Limitations
+## ⚠️ Limitations
 
 Keep the following considerations in mind.
 
@@ -164,7 +196,7 @@ Applications requiring durable persistence should consider the PostgreSQL provid
 
 ---
 
-# Choosing Between Redis and PostgreSQL
+## 🧭 Choosing Between Redis and PostgreSQL
 
 | Requirement | Redis | PostgreSQL |
 |-------------|:-----:|:----------:|
@@ -177,7 +209,7 @@ Applications requiring durable persistence should consider the PostgreSQL provid
 
 ---
 
-# Related Documentation
+## 📚 Related Documentation
 
 - Getting Started
 - Configuration

@@ -34,7 +34,7 @@ flowchart LR
 
 ---
 
-# 🎯 Design Goals
+## 🎯 Design Goals
 
 CoreSystem.Idempotency is designed around a few core principles:
 
@@ -47,7 +47,7 @@ CoreSystem.Idempotency is designed around a few core principles:
 
 ---
 
-# 🏛️ Architectural Patterns
+## 🏛️ Architectural Patterns
 
 The framework combines several architectural patterns.
 
@@ -62,7 +62,7 @@ These patterns keep the framework extensible while minimizing the impact on appl
 
 ---
 
-# 🧩 Core Components
+## 🧩 Core Components
 
 The framework is composed of the following components.
 
@@ -79,7 +79,7 @@ Each component has a single responsibility and can evolve independently.
 
 ---
 
-# 🔄 Request Lifecycle
+## 🔄 Request Lifecycle
 
 Every request follows the same execution flow.
 
@@ -122,7 +122,7 @@ sequenceDiagram
 
 ---
 
-# 🔐 Request Fingerprinting
+## 🔐 Request Fingerprinting
 
 Before querying the storage provider, the middleware computes a deterministic fingerprint of the incoming request.
 
@@ -140,7 +140,7 @@ See **Fingerprinting** for implementation details.
 
 ---
 
-# 🗄️ Storage Providers
+## 🗄️ Storage Providers
 
 The middleware never communicates with a storage technology directly.
 
@@ -170,7 +170,7 @@ Additional providers can be introduced by implementing `IIdempotencyStorage`, wi
 
 ---
 
-# ♻️ Response Replay
+## ♻️ Response Replay
 
 After a successful request execution, the middleware persists:
 

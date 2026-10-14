@@ -14,7 +14,7 @@ In this guide you'll learn how to:
 
 ---
 
-# Prerequisites
+## 📋 Prerequisites
 
 Before getting started, ensure you have:
 
@@ -24,7 +24,7 @@ Before getting started, ensure you have:
 
 ---
 
-# Choose a Storage Provider
+## 🧩 Choose a Storage Provider
 
 `CoreSystem.Idempotency` requires a storage provider to persist idempotency entries.
 
@@ -39,7 +39,7 @@ See **Storage Providers** for more information.
 
 ---
 
-# Step 1 — Install the Framework
+## 📦 Step 1 — Install the Framework
 
 Install the core framework.
 
@@ -57,17 +57,17 @@ The package contains:
 
 ---
 
-# Step 2 — Install a Storage Provider
+## 🚀 Step 2 — Install a Storage Provider
 
 Choose the provider that best fits your application.
 
-### Redis
+### 🔴 Redis
 
 ```bash
 dotnet add package CoreSystem.Idempotency.Redis
 ```
 
-### PostgreSQL
+### 🐘 PostgreSQL
 
 ```bash
 dotnet add package CoreSystem.Idempotency.PostgreSql
@@ -75,7 +75,7 @@ dotnet add package CoreSystem.Idempotency.PostgreSql
 
 ---
 
-# Step 3 — Configure the Framework
+## ⚙️ Step 3 — Configure the Framework
 
 Configure the framework in `appsettings.json`.
 
@@ -97,7 +97,7 @@ Configure the framework in `appsettings.json`.
 
 ---
 
-# Step 4 — Register the Services
+## 🔌 Step 4 — Register the Services
 
 Register the framework.
 
@@ -113,21 +113,26 @@ builder.Services
 
 Then register the storage provider.
 
-### Redis
+### 🔴 Redis
 
 ```csharp
 builder.Services.AddCoreIdempotencyRedis(options =>
 {
-    // Configure Redis
+    options.Configuration = redis =>
+    {
+        redis.EndPoints.Add(
+            builder.Configuration.GetConnectionString("Redis")!);
+    };
 });
 ```
 
-### PostgreSQL
+### 🐘 PostgreSQL
 
 ```csharp
 builder.Services.AddCoreIdempotencyPostgreSql(options =>
 {
-    // Configure PostgreSQL
+    options.ConnectionString =
+        builder.Configuration.GetConnectionString("Idempotency");
 });
 ```
 
@@ -137,7 +142,7 @@ The provider package registers the corresponding `IIdempotencyStorage` implement
 
 ---
 
-# Step 5 — Enable the Middleware
+## ✅ Step 5 — Enable the Middleware
 
 Configure the ASP.NET Core request pipeline.
 
@@ -151,7 +156,7 @@ app.Run();
 
 ---
 
-# Step 6 — Send an Idempotent Request
+## 📤 Step 6 — Send an Idempotent Request
 
 Include an idempotency key in every request that needs duplicate suppression and response replay.
 
@@ -172,7 +177,7 @@ Subsequent requests using the same idempotency key and an identical request fing
 
 ---
 
-# Next Steps
+## 🧭 Next Steps
 
 Now that the framework is running, continue with:
 

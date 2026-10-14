@@ -1,20 +1,18 @@
 # 🔴 CoreSystem.Idempotency.Redis
 
+> **Redis storage provider for CoreSystem.Idempotency, built on the `IIdempotencyStorage` abstraction.**
+
+It is the recommended provider for production workloads that require low latency, horizontal scalability, and automatic expiration of idempotency entries.
+
 ![NuGet](https://img.shields.io/nuget/v/CoreSystem.Idempotency.Redis?style=for-the-badge)
 ![Downloads](https://img.shields.io/nuget/dt/CoreSystem.Idempotency.Redis?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 ![.NET](https://img.shields.io/badge/.NET-8.0-blue?style=for-the-badge)
 ![Redis](https://img.shields.io/badge/Redis-7+-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 
-Redis storage provider for **CoreSystem.Idempotency**.
-
-CoreSystem.Idempotency.Redis provides a high-performance implementation of `IIdempotencyStorage`, enabling distributed idempotency across multiple ASP.NET Core application instances.
-
-It is the recommended provider for production workloads that require low latency, horizontal scalability, and automatic expiration of idempotency entries.
-
 ---
 
-# ✨ Features
+## ✨ Features
 
 - ✅ Distributed idempotency
 - ✅ High-performance Redis storage
@@ -26,7 +24,7 @@ It is the recommended provider for production workloads that require low latency
 
 ---
 
-# 📦 Installation
+## 📦 Installation
 
 Install the framework.
 
@@ -42,9 +40,31 @@ dotnet add package CoreSystem.Idempotency.Redis
 
 ---
 
-# 🚀 Quick Start
+## 🚀 Quick Start
 
-Configure Redis.
+Configure the Redis connection and register the provider.
+
+```csharp
+builder.Services
+    .AddCoreIdempotency(options =>
+    {
+        builder.Configuration
+            .GetSection("Core:Idempotency")
+            .Bind(options);
+    })
+    .AddCoreIdempotencyRedis(options =>
+    {
+        options.Configuration = redis =>
+        {
+            redis.EndPoints.Add("localhost:6379");
+        };
+    });
+```
+
+The connection endpoint is supplied through the `RedisOptions.Configuration` delegate,
+which receives a `StackExchange.Redis.ConfigurationOptions` instance.
+
+To read the endpoint from configuration instead, assign it inside the same delegate.
 
 ```json
 {
@@ -54,23 +74,21 @@ Configure Redis.
 }
 ```
 
-Register the framework.
-
 ```csharp
-builder.Services
-    .AddCoreIdempotency(options =>
+builder.Services.AddCoreIdempotencyRedis(options =>
+{
+    options.Configuration = redis =>
     {
-        builder.Configuration
-            .GetSection("Core:Idempotency")
-            .Bind(options);
-    });
+        redis.EndPoints.Add(
+            builder.Configuration.GetConnectionString("Redis")!);
+    };
+});
 ```
 
-Register the Redis provider.
-
-```csharp
-builder.Services.AddCoreIdempotencyRedis();
-```
+> **Note**
+>
+> `RedisOptions.Configuration` is an `Action<ConfigurationOptions>`, not a string.
+> A plain connection string cannot be bound to it with `Bind`.
 
 Enable the middleware.
 
@@ -80,7 +98,7 @@ app.UseCoreIdempotency();
 
 ---
 
-# ⚡ Why Redis?
+## ⚡ Why Redis?
 
 Redis is ideal for:
 
@@ -92,7 +110,7 @@ Redis is ideal for:
 
 ---
 
-# 📊 Characteristics
+## 📊 Characteristics
 
 | Feature | Supported |
 |----------|:---------:|
@@ -104,7 +122,7 @@ Redis is ideal for:
 
 ---
 
-# 📚 Documentation
+## 📚 Documentation
 
 Complete documentation includes:
 
@@ -116,6 +134,12 @@ Complete documentation includes:
 
 ---
 
-# 📄 License
+## 🤝 Contributing
 
-MIT License © Federin Pastor Gutierrez Ortiz
+Contributions, bug reports and feature requests are always welcome. Fork the repository, create a feature branch, and open a pull request.
+
+---
+
+## 📄 License
+
+Released under the MIT License.

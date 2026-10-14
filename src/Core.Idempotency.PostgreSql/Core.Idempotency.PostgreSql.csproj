@@ -18,7 +18,7 @@
 		<Authors>Federin Pastor Gutierrez Ortiz</Authors>
 
 		<Description>
-			Production-ready PostgreSQL storage provider for CoreSystem.Idempotency, providing durable persistence through the IIdempotencyStorage abstraction with automatic schema creation and Dapper-based data access.
+			Production-ready PostgreSQL storage provider for CoreSystem.Idempotency, providing durable persistence through the IIdempotencyStorage abstraction with Dapper-based data access. Ships an idempotent schema script at scripts/postgres.sql.
 		</Description>
 
 		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem</RepositoryUrl>
