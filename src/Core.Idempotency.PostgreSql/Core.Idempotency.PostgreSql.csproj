@@ -55,12 +55,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="CoreSystem.Idempotency" />
 	  <PackageReference Include="Dapper" />
 	  <PackageReference Include="Npgsql" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Core.Idempotency\Core.Idempotency.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

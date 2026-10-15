@@ -49,11 +49,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CoreSystem.Idempotency" />
 		<PackageReference Include="CoreSystem.Redis" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Core.Idempotency\Core.Idempotency.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
