@@ -20,10 +20,18 @@ Never store secrets, tokens, or personal data.
   `main` at `dcc6ce5` (PR #10).
 - Docker Desktop is not started by default here; the integration suites need it and
   fail with `DockerUnavailableException` until it is running.
-- The release flow exists in three places and they must not drift: `.opencode/commands/release.md`
-  (order: sync, build, test, verify artifact, tag), `.opencode/skills/nuget-release/SKILL.md`
-  (principles) and `publish-package.bat` (local helper). The `.bat` is the strictest of the three;
-  when it is stricter than the others, the others are what to fix.
+- **Releases are run by hand with `publish-package.bat`, no agent.** Rationale: the script already
+  performs every gate (version not published, no existing tag, clean tree, on main, sync, build,
+  tests, `.nupkg` contents, published dependencies), it costs zero tokens, and an agent adds
+  ~2.3k tokens of repeated boilerplate per run to re-derive what the script decides mechanically.
+  Reserve an agent for the judgement calls: which version to cut, interpreting a failed gate,
+  and whether to unlist 2.0.0.
+- **`publish.yml` never inspects the `.nupkg`.** It verifies restore `--locked-mode`, build, tests,
+  that pack produced exactly one file with the expected name, and gets a 409 on a duplicate
+  version. It does not check README, LICENSE, the nuspec `<readme>` declaration or whether the
+  pinned dependency exists. So the local script is the only gate against shipping a package like
+  2.0.0, whose defects were all invisible to a green CI run. Treat it as production code even
+  though it is gitignored.
 
 ## Decisions
 
