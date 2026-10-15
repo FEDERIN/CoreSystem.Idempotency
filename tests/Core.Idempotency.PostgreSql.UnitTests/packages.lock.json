@@ -475,15 +475,6 @@
           "xunit.v3.runner.common": "[3.2.2]"
         }
       },
-      "CoreSystem.Idempotency": {
-        "type": "Project",
-        "dependencies": {
-          "CoreSystem.Http": "[1.1.0, )",
-          "CoreSystem.Observability.Abstractions": "[1.0.1, )",
-          "CoreSystem.Serialization": "[1.2.3, )",
-          "OpenTelemetry.Extensions.Hosting": "[1.19.0, )"
-        }
-      },
       "CoreSystem.Idempotency.PostgreSql": {
         "type": "Project",
         "dependencies": {
@@ -500,6 +491,18 @@
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.2",
           "Microsoft.Extensions.Options": "8.0.2"
+        }
+      },
+      "CoreSystem.Idempotency": {
+        "type": "CentralTransitive",
+        "requested": "[2.0.1, )",
+        "resolved": "2.0.1",
+        "contentHash": "HRzRYm5eGol3p6XKgICNUGwXHaSTVFEdrn1iI/e0QAnSWat7LmEN3fGg1QzExQIEfrJASFqKuUk0Autg3O3ivQ==",
+        "dependencies": {
+          "CoreSystem.Http": "1.1.0",
+          "CoreSystem.Observability.Abstractions": "1.0.1",
+          "CoreSystem.Serialization": "1.2.3",
+          "OpenTelemetry.Extensions.Hosting": "1.19.0"
         }
       },
       "CoreSystem.Observability.Abstractions": {

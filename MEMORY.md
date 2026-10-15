@@ -6,15 +6,17 @@ Never store secrets, tokens, or personal data.
 
 ## Current state (2026-10-14)
 
-- Published: **2.0.0** on nuget.org for all three packages, alongside 1.0.0–1.0.4.
-  2.0.0 shipped documentation that does not compile and a PostgreSQL schema missing
-  `state` and `lease_id`. It also records a git commit that does not exist in this repo,
-  so the published package cannot be reproduced from source.
-- **2.0.1 is prepared but not released**: the three csproj files and the changelog are
-  updated in the working tree only. Nothing ships until the version is tagged.
-- `main` at `83db38f`. PRs #2 (docs), #3 (metadata and pipeline) and #4 (XML docs and
-  SourceLink) are merged. There are still **no git tags** in this repository.
-- Five test projects green: 3 unit (core, Redis, PostgreSql) + 2 Testcontainers integration.
+- Published on nuget.org: core `CoreSystem.Idempotency` at **2.0.1** (tag
+  `Core.Idempotency/v2.0.1`); both providers still at **2.0.0**, whose versions had
+  broken docs and a PostgreSQL schema missing `state`/`lease_id`.
+- Branch `release/2.0.1-providers` prepares the two provider releases: the providers now
+  consume the published core through a pinned `PackageReference` instead of a
+  `ProjectReference`. Verified in a detached worktree of the commit: restore
+  `--locked-mode`, build with 0 warnings, 3 unit + 2 integration projects green.
+- `main` at `9ca13b6` (PR #9, publish workflow). The tag sequence still pending:
+  `Core.Idempotency.Redis/v2.0.1` then `Core.Idempotency.PostgreSql/v2.0.1`.
+- Docker Desktop is not started by default here; the integration suites need it and
+  fail with `DockerUnavailableException` until it is running.
 
 ## Decisions
 
@@ -23,6 +25,11 @@ Never store secrets, tokens, or personal data.
 - **Lease-based contract** (`TryAcquire` / `Complete` / `Release` / `Get` / `Set`) rather than a plain
   get/set cache. Rationale: concurrent duplicates must be *rejected*, not both executed, so acquire has
   to be atomic. Any change here is breaking for every provider.
+- **Providers consume the core as a published package, not as a project.** Pinned to 2.0.1
+  in `Directory.Packages.props`. Rationale: each provider can then ship on its own tag with a
+  concrete nuspec dependency, and the publish workflow restores only the provider csproj.
+  Cost: the pinned version must already be live before a provider is tagged, and local
+  provider builds test the *published* core rather than the local one.
 - **Namespace `Core.Idempotency.*` vs PackageId `CoreSystem.Idempotency*`.** Looks like a bug, is not.
   Rationale: PackageId is the NuGet contract; the namespace is already public API since 1.x.
 - **PostgreSQL DDL is duplicated** in `src/.../scripts/postgres.sql` and `tests/.../Scripts/postgresql.sql`.

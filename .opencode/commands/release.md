@@ -168,9 +168,9 @@ Base-first, not reverse:
 
     Core.Idempotency  ->  Core.Idempotency.Redis, Core.Idempotency.PostgreSql
 
-An unversioned `ProjectReference` becomes a nuspec dependency of the referenced
-version, so publishing a dependent first puts a package on the feed whose
-dependency does not exist yet.
+The providers pin the core through a `PackageReference` on a version that
+must already be live, so publishing a dependent first puts a package on the
+feed whose dependency does not exist yet.
 
 `publish.yml` has no `--skip-duplicate`, so a partially completed release is
 not resumable by re-running the tags that already succeeded. A failure in the
