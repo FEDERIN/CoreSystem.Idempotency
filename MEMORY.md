@@ -15,8 +15,15 @@ Never store secrets, tokens, or personal data.
   `--locked-mode`, build with 0 warnings, 3 unit + 2 integration projects green.
 - `main` at `9ca13b6` (PR #9, publish workflow). The tag sequence still pending:
   `Core.Idempotency.Redis/v2.0.1` then `Core.Idempotency.PostgreSql/v2.0.1`.
+- **2.0.1 is fully released**: core, Redis and PostgreSql all live on nuget.org, tagged
+  `Core.Idempotency/v2.0.1`, `Core.Idempotency.Redis/v2.0.1`, `Core.Idempotency.PostgreSql/v2.0.1`.
+  `main` at `dcc6ce5` (PR #10).
 - Docker Desktop is not started by default here; the integration suites need it and
   fail with `DockerUnavailableException` until it is running.
+- The release flow exists in three places and they must not drift: `.opencode/commands/release.md`
+  (order: sync, build, test, verify artifact, tag), `.opencode/skills/nuget-release/SKILL.md`
+  (principles) and `publish-package.bat` (local helper). The `.bat` is the strictest of the three;
+  when it is stricter than the others, the others are what to fix.
 
 ## Decisions
 
@@ -61,8 +68,9 @@ Never store secrets, tokens, or personal data.
 
 ## Known gaps
 
-- `publish-package.bat` is still stale: it references a solution and projects from an unrelated
-  repository. All `.bat` files are gitignored, so they are local helpers only.
+- `publish-package.bat` and `generate-lock-files.bat` are local helpers only: they are gitignored,
+  so they never reach another clone and their fixes are invisible to CI. Review them by reading
+  them; the repository rules they implement live in `AGENTS.md` and `.opencode/`.
 - About 27 inert central package pins remain, including `xunit` 2.5.3 beside the `xunit.v3`
   actually used, and `Microsoft.AspNetCore.Http` 2.3.0.
 - Undecided: whether to unlist 2.0.0 on nuget.org, and whether the PostgreSQL provider should

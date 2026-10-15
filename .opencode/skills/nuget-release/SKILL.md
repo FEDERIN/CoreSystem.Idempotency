@@ -1,76 +1,43 @@
 ---
 name: NuGet Release and Publishing
-description: Use when cutting a release, bumping a package version, publishing to NuGet, or setting up tag-driven release automation. Covers the csproj/props/assembly version sync, tag format, verifying the generated .nupkg, and the fact that published versions are immutable.
+description: Critical rules for NuGet package immutability, versioning, packaging, and known release risks.
 ---
 
 # NuGet Release and Publishing
 
-## Published versions are immutable
+## 1. Immutability and recovery
 
-NuGet **cannot** re-push an existing version. If a mistake ships (wrong README, a
-nonexistent API name in the docs, broken metadata), the only fix is a new patch
-version. Plan releases accordingly: verify the artifact *before* tagging.
+- Published NuGet versions are immutable; the same version cannot be pushed again.
+- If a published package contains an error, fix it and publish a new patch version.
+- Check that the version and Git tag do not already exist before publishing.
+- A partial release may leave packages or tags already published. Do not blindly rerun successful tags; identify completed steps and recover manually.
+- Publish the base package before its providers/dependents, because they may depend on a base-package version that must already be available.
 
-## Version sync across four places
+## 2. Consistent versioning
 
-A release version must match in all of these, or consumers get mismatched metadata:
+The release version must match across:
 
-```xml
-<Version>1.2.3</Version>
-<AssemblyVersion>1.2.3.0</AssemblyVersion>
-<FileVersion>1.2.3.0</FileVersion>
-<InformationalVersion>1.2.3</InformationalVersion>
-```
+- `<Version>`: `1.2.3`
+- `<AssemblyVersion>` and `<FileVersion>`: `1.2.3.0`
+- `<InformationalVersion>`: `1.2.3`
+- The Git tag, using the format defined by the repository.
+- The central package version, if the solution pins it explicitly.
 
-Plus the central pin, if the solution references the package:
+Before tagging, validate these versions, update lock files only when appropriate, and run the build, tests, and `dotnet format --verify-no-changes` when required by the repository's release process.
 
-```xml
-<PackageVersion Include="CoreSystem.Foo" Version="1.2.3" />
-```
+Renaming a public parameter can technically be a breaking change. If it is classified as a patch because it corrects a mismatch with the implemented interface, document the rationale in `<PackageReleaseNotes>`.
 
-Checklist before tagging:
-- [ ] `Version` matches the tag
-- [ ] `AssemblyVersion` / `FileVersion` are 4-part
-- [ ] `InformationalVersion` is the plain version
-- [ ] Central pin bumped (if referenced)
-- [ ] Lock files regenerated: `dotnet restore <sln> --use-lock-file --force-evaluate`
-- [ ] Build clean, tests green, `dotnet format --verify-no-changes` passes
+## 3. Packaging and verification
 
-## Tag-driven automation
+A successful build does not guarantee that the `.nupkg` is complete. Inspect the generated package before tagging/publishing and confirm:
 
-Publish via tags, not by pushing to a release branch. Format:
-`<src folder name>/v<version>` — e.g. `Core.Cache.Redis/v2.0.3`.
+- `README.md` is at the package root.
+- `LICENSE` is present.
+- The `.nuspec` has the correct `PackageId`, version, and metadata.
+- Dependencies and packaged content are correct.
+- The `.nuspec` declares the packaged README, for example `<readme>README.md</readme>`.
 
-The workflow should:
-1. Extract project name and version from the tag (`cut -d'/' -f1` / `-f2`, strip `v`)
-2. Validate the folder exists
-3. Build that one project with `/p:Version=$VERSION`
-4. Run the **full** test suite (not just that project)
-5. Push to NuGet.org with `--skip-duplicate`
-6. Push to GitHub Packages
-
-## Verify the .nupkg, do not trust the build
-
-A successful build does **not** mean the package is correct. A malformed
-`<None Include>` or a wrong `PackageReadmeFile` compiles fine and publishes a
-package missing its contents.
-
-After building, inspect the artifact:
-
-```powershell
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-$zip = [System.IO.Compression.ZipFile]::OpenRead($pkg.FullName)
-try {
-  $zip.Entries | Select-Object FullName
-  # and check the nuspec declares <readme>README.md</readme>
-} finally { $zip.Dispose() }
-```
-
-Confirm: README present at package root, LICENSE present, nuspec metadata correct.
-
-## One README per package
-
-Keep exactly one `README.md` per project and pack it:
+Keep one `README.md` per project and pack it at the package root:
 
 ```xml
 <PropertyGroup>
@@ -81,41 +48,13 @@ Keep exactly one `README.md` per project and pack it:
 </ItemGroup>
 ```
 
-Do not maintain a second `README_NUGET.md` alongside `README.md`. Readers conflate
-them, and only one actually ships. The NuGet page renders the packed file, so it is
-the source of truth for consumers.
+Centralize shared NuGet configuration in `src/Directory.Build.props` where appropriate. Enable `GenerateDocumentationFile` for production projects, not globally across the solution, to avoid unnecessary CS1591 warnings in test and sample projects.
 
-## Semantic versioning judgement
+## 4. Known risks and rules
 
-A rename of a public parameter is technically a breaking change, but if the old
-name disagreed with the interface being implemented, it is a consistency bugfix and
-a **patch** is defensible. Record the reasoning in `<PackageReleaseNotes>` so the
-decision is visible to consumers:
-
-```xml
-<PackageReleaseNotes>
-  2.0.1: SourceLink + XML docs now shipped; renamed ExecuteAsync parameter ct to
-  cancellationToken to match IResiliencePipeline; deterministic builds.
-</PackageReleaseNotes>
-```
-
-## Package metadata is worth centralizing
-
-Put shared NuGet metadata in `src/Directory.Build.props` instead of repeating it in
-every csproj:
-
-```xml
-<Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
-<PropertyGroup>
-  <GenerateDocumentationFile>true</GenerateDocumentationFile>
-  <PublishRepositoryUrl>true</PublishRepositoryUrl>
-  <EmbedUntrackedSources>true</EmbedUntrackedSources>
-  <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-</PropertyGroup>
-<ItemGroup>
-  <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
-</ItemGroup>
-```
-
-Enable `GenerateDocumentationFile` only for `src/`, never repo-wide — it would
-produce CS1591 across all test and sample projects.
+- Do not rely on `dotnet build` alone; verify the actual `.nupkg` contents.
+- Never publish an existing version or overwrite an existing tag.
+- Do not run commands that modify lock files without checking their impact. In this repository, `dotnet restore <sln> --use-lock-file --force-evaluate` may change version anchors; the release procedure may prohibit it to avoid unrelated changes.
+- `dotnet list package --vulnerable` may return exit code 0 even when it reports a high-severity vulnerability. Do not use it as the sole release gate. Follow the repository's configured audit checks and stop if `restore` fails.
+- If a release fails after some packages were published, record exactly which packages were published. Do not assume the entire flow is safe to rerun.
+- Repository-specific instructions (`release.md` and its script) define the actual workflow. This skill documents general principles and must not contradict that procedure.

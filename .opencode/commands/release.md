@@ -4,92 +4,51 @@ description: Publish a CoreSystem component by tagging it (validate, build, test
 
 Load the `nuget-release` skill and publish a release.
 
-Target: $ARGUMENTS
+## Arguments
 
-Accept two arguments and nothing else:
+Accept exactly two arguments: `release <Component> <Version>`, e.g. `release Redis 2.5.1`.
 
-    release Redis 2.5.1
+- `argumentA`: component without prefix, e.g. `Idempotency` or `Idempotency.Redis`
+- `argumentB`: version, e.g. `2.5.1`
+- Derive names; do not hardcode:
+  - `NAME = Core.<argumentA>` for folders, paths, and tag
+  - `PACKAGE = CoreSystem.<argumentA>` is an example only; read the actual `PackageId` from the `.csproj`
+  - `TAG = <NAME>/v<argumentB>`
 
-- `$argumentA` = component without prefix, e.g. `Idempotency`, `Idempotency.Redis`
-- `$argumentB` = version, e.g. `2.5.1`
+`Core.` is used for paths/tags; `CoreSystem.` is used for package IDs and tag messages. They are not interchangeable. `publish.yml` resolves the project as `src/$PROJECT/$PROJECT.csproj`, so the tag must use the folder name.
 
-Derive, do not hardcode:
+## 1. Discover and validate projects
 
-    $NAME    = Core.$argumentA          -> Core.Idempotency        (folder, paths, tag)
-    $PACKAGE = CoreSystem.$argumentA    -> CoreSystem.Idempotency  (PackageId, nuspec)
-    $TAG     = $NAME/v$argumentB        -> Core.Idempotency/v2.0.1
+Resolve the only root `*.sln`, or the solution containing `src/$NAME/`; abort and report the missing file if neither resolves.
 
-The `Core.` prefix belongs to paths and tags. The `CoreSystem.` prefix belongs
-to the PackageId and the tag message. They are not interchangeable: the folder
-is `Core.Idempotency` while the package is `CoreSystem.Idempotency`, and
-publish.yml resolves the csproj as `src/$PROJECT/$PROJECT.csproj`, so the tag
-must carry the folder name or the workflow fails before packing.
+Require `src/$NAME/$NAME.csproj`. Discover tests by convention:
+- Required unit tests: `tests/$NAME.UnitTests/$NAME.UnitTests.csproj`
+- Optional integration tests: `tests/$NAME.IntegrationTests/$NAME.IntegrationTests.csproj`
 
-## 1. Discover the solution and projects
+Do not hardcode projects. Only tests matching `$NAME` belong to this release. Validate each test project's `ProjectReference` points to `src/$NAME/`; otherwise abort.
 
-Do not assume paths. Resolve them:
+Read `PackageId` from the production `.csproj`; never infer it from the component name.
 
-- Solution: the only `*.sln` at the root, or the one containing `src/$NAME/`.
-  If none matches, ABORT and say which file is missing.
-- Production: `src/$NAME/$NAME.csproj`. If absent, ABORT.
-- Unit tests: `tests/$NAME.UnitTests/$NAME.UnitTests.csproj`.
-- Integration: `tests/$NAME.IntegrationTests/$NAME.IntegrationTests.csproj`.
+Report before continuing: component; resolved solution and how it was found; `PackageId`; unit-test path; integration-test path or that it is absent; tag.
 
-Derive the test projects by convention rather than by a hardcoded list.
-`tests/<X>.UnitTests` and `tests/<X>.IntegrationTests` belong to component `<X>`,
-so anything whose prefix does not match `$NAME` is another component's and is
-skipped. This is what makes the flow portable: a new component needs no edit.
+## 2. Pre-checks
 
-Validate the association before running anything. Each discovered test project
-must reference `src/$NAME/` in its `ProjectReference`. If a project named for
-this component points at a different `src/`, ABORT: it would compile the wrong
-code and publish it.
+Validate repository, arguments, paths, unpublished version, and absence of the tag locally/remotely. Never delete changes or overwrite tags. If the working tree is dirty, stop and report it.
 
-Report the discovery before continuing:
+For a provider, also confirm that every `CoreSystem.Idempotency*` dependency recorded in the package is already published. Read the versions from the pinned `PackageVersion` entries or from the built `.nuspec`, then check them against `https://api.nuget.org/v3-flatcontainer/<id>/index.json`. A package that declares an unpublished dependency is unfixable: consumers cannot restore it and the version can never be replaced.
 
-    Componente  : <argumentA>
-    Solución    : <resolved>          [how it was found]
-    PackageId   : <read from csproj>
-    Unitarias   : <path>             [run]
-    Integración : <path>             [run] | (no existe)
-    Tag         : <TAG>
-
-Read the `PackageId` from the csproj. Never construct it from the component
-name; the two do not always match.
-
-## 2. Validate the test modules before executing them
+## 3. Sync with origin, then work against that state
 
 ```bash
-# unitarias — OBLIGATORIAS
-if [ ! -f "tests/Core.$argumentA.UnitTests/Core.$argumentA.UnitTests.csproj" ]; then
-    echo "ABORTAR: no existe tests/Core.$argumentA.UnitTests"
-    exit 1
-fi
-
-# integración — OPCIONAL pero visible
-if [ -f "tests/Core.$argumentA.IntegrationTests/Core.$argumentA.IntegrationTests.csproj" ]; then
-    TEST_INTEGRATION="tests/Core.$argumentA.IntegrationTests/Core.$argumentA.IntegrationTests.csproj"
-else
-    echo "INFO: $argumentA no tiene modulo de integracion; se publica solo con unitarias"
-fi
+git checkout main
+git pull origin main
 ```
 
-Unit tests missing means ABORT. Integration tests missing means continue and
-say so in the summary, because that is the state of the repo rather than an
-omission: only `Redis` and `PostgreSql` have integration projects; `Idempotency` itself does not.
+Do this before building or testing, not after. The tag is created from `HEAD`, so the commit that must be validated is the one that ends up published. If `main` is not up to date, the whole validate-then-pull cycle has to be repeated. Stop and ask if local changes may be lost or conflicts occur.
 
-## 3. Pre-checks
+## 4. Restore, clean, and build
 
-Confirm the repository is correct, the arguments are valid, the discovered
-paths exist, the version is not already published, and the tag does not exist
-locally or on the remote.
-
-Do not delete local changes. Do not overwrite existing tags. If the working
-tree is dirty, stop and report what is there.
-
-## 4. Restore, clean and build
-
-Restore only the project being published, never the whole solution:
+Restore/build only the production project, not the whole solution:
 
 ```bash
 dotnet restore src/Core.$argumentA/Core.$argumentA.csproj
@@ -98,80 +57,54 @@ dotnet restore src/Core.$argumentA/Core.$argumentA.csproj
 dotnet build   src/Core.$argumentA/Core.$argumentA.csproj -c Release --no-restore
 ```
 
-Do not run `dotnet restore <solution> --force-evaluate` here. Measured on this
-repo it leaves lock files intact but rewrites a stale version anchor, for
-example `CoreSystem.Idempotency` from `[1.0.6, )` to `[2.0.1, )`. That is a correct
-update, not damage, but it is unrelated to the release. If any lock file
-changes as a side effect, revert it before committing.
+Do not run `dotnet restore <solution> --use-lock-file --force-evaluate`: here it can rewrite version anchors (e.g. `CoreSystem.Idempotency` from `[1.0.6, )` to `[2.0.1, )`), an unrelated change. Revert any lock-file changes caused by this flow.
 
-## 5. Vulnerability report — skipped
+## 5. Vulnerability gate
 
-Do not run `dotnet list package --vulnerable`. It exits 0 even when it reports
-a High advisory, in both text and JSON, so it never gates anything and its
-output can only mislead. The real gate already ran in the restore step of
-section 4: `NuGetAudit` with `NuGetAuditMode=all` plus `TreatWarningsAsErrors`
-turns NU1902/NU1903 into a restore failure, and section 4 aborts on a failed
-restore. A restore that succeeds is the audit result. Do not add this step back
-"just to show the report".
+Do not use `dotnet list package --vulnerable` as a gate: it can exit 0 despite a High advisory. The configured restore audit (`NuGetAudit`, `NuGetAuditMode=all`, `TreatWarningsAsErrors`) gates NU1902/NU1903. Abort on restore failure; do not add a report-only step.
 
 ## 6. Tests
 
-```bash
-dotnet test tests/Core.$argumentA.UnitTests/Core.$argumentA.UnitTests.csproj \
-  -c Release --no-restore
+Unit tests are mandatory. Abort if missing, failing, or unable to run:
 
-dotnet test "$TEST_INTEGRATION" -c Release --no-restore   # only if it exists
+```bash
+dotnet test tests/Core.$argumentA.UnitTests/Core.$argumentA.UnitTests.csproj -c Release
 ```
 
-Do not continue if the build fails, a test fails, or a required test module
-cannot run. Keep the error detail for diagnosis.
+The test projects were not restored in step 4, so do not pass `--no-restore` here; an unpinned restore is required and is also why step 7 re-checks the working tree.
 
-## 7. Git
+Run integration tests if the project exists; otherwise report that it is absent:
 
 ```bash
-git checkout main
-git pull origin main
+dotnet test "$TEST_INTEGRATION" -c Release
 ```
 
-If the pull changed code relative to what was tested, repeat steps 4, 5 and 6
-against the final code before publishing. If local changes could be lost or
-there are conflicts, stop and ask.
+Keep failure details for diagnosis. Do not continue after a build or test failure.
 
-## 8. Confirm, then tag and publish
+## 7. Verify the artifact, then confirm, tag, and publish
 
-Show the component, the version, the resolved solution, the tag, and the build
-and test results. Wait for explicit confirmation before any operation that
-modifies the repository or pushes. Keep the summary to that: no polling loop,
-no repeated re-checking of a value that will not change within the run.
+Inspect the produced `.nupkg` before tagging. A successful build does not prove the package is correct, and 2.0.0 shipped a README example that did not compile and a schema missing two mandatory columns. Confirm:
 
-After confirmation:
+- `README.md` and `LICENSE` are at the package root, and the `.nuspec` declares `<readme>README.md</readme>`.
+- The `.nuspec` `id` and `version` match the component and the argument.
+- Every `CoreSystem.Idempotency*` dependency is already published (step 2).
+
+Then show component, version, solution, tag, and build/test results; wait for explicit confirmation before modifying the repository or pushing.
+
+After confirmation, create and push only the component tag. Use the `PackageId` read in step 1 for the tag message, never a name derived from the component:
 
 ```bash
-git tag -a Core.$argumentA/v$argumentB -m "CoreSystem.$argumentA $argumentB"
+git tag -a Core.$argumentA/v$argumentB -m "$PACKAGE_ID $argumentB"
 git push origin Core.$argumentA/v$argumentB
 ```
 
-Push only that tag. Then summarise the release.
+Summarize the release. Do not poll NuGet.org; its index may lag, and the workflow result reports push status.
 
-Do not sleep in a loop polling nuget.org for the new version to appear. The
-index lags a publish by several minutes and the workflow result already states
-whether the push succeeded. Report what the workflow returned and stop.
+Published versions are immutable. `CoreSystem.Idempotency` `2.0.0` is already live and cannot be republished; a repeat returns HTTP 409. Never publish if validation fails or the tag already exists.
 
-Published versions are immutable. `CoreSystem.Idempotency` 2.0.0 is already live, so
-it can never be re-pushed; a re-publish attempt fails with 409, which is the
-correct outcome. Never publish if a required validation failed or the tag
-exists.
+## 8. Release order and partial failures
 
-## Publish order
+Publish base packages before providers:
+`Core.Idempotency` → `Core.Idempotency.Redis`, `Core.Idempotency.PostgreSql`.
 
-Base-first, not reverse:
-
-    Core.Idempotency  ->  Core.Idempotency.Redis, Core.Idempotency.PostgreSql
-
-The providers pin the core through a `PackageReference` on a version that
-must already be live, so publishing a dependent first puts a package on the
-feed whose dependency does not exist yet.
-
-`publish.yml` has no `--skip-duplicate`, so a partially completed release is
-not resumable by re-running the tags that already succeeded. A failure in the
-last tag leaves the earlier ones live and the recovery path is manual.
+Providers pin the core through a `PackageReference` on a version that must already be live, so publishing a dependent first puts a package on the feed whose dependency does not exist yet. `publish.yml` lacks `--skip-duplicate`; do not rerun successful tags after partial failure. Record successes and recover manually.
