@@ -76,11 +76,12 @@ Consumers depend on the package id; the namespace root is part of the published 
    `StackExchange.Redis`, `Npgsql`, `Dapper`, or any provider package. If core code needs
    storage, extend `IIdempotencyStorage` instead.
 2. **Dependency direction is one-way.** Providers → core. Core never references a provider.
-   Both providers reference `Core.Idempotency` via `ProjectReference`.
+   Both providers reference `Core.Idempotency` through a `PackageReference` on the version
+   pinned in `Directory.Packages.props`, which must already be on nuget.org. That dependency
+   becomes a concrete nuspec dependency and lets each provider ship on its own tag.
 3. **Publish order is base-first**: `Core.Idempotency` → `Core.Idempotency.Redis` /
-   `Core.Idempotency.PostgreSql`. An unversioned `ProjectReference` becomes a nuspec
-   dependency, so publishing a provider before its core puts a package on the feed whose
-   dependency does not exist yet.
+   `Core.Idempotency.PostgreSql`. Publishing a provider before its core puts a package on the
+   feed whose dependency does not exist yet.
 4. **Extensibility points** are `IIdempotencyStorage`, `IIdempotencyKeyResolver`,
    `IRequestFingerprintProvider`, `IRequestFingerprintBuilder`, `IRequestHasher`.
    Adding a provider means implementing these and shipping a new package — not editing core.
@@ -189,12 +190,11 @@ Never edit `packages.lock.json` by hand.
 
 1. Update `<Version>`, `<AssemblyVersion>`, `<FileVersion>` and `<InformationalVersion>` in the
    package csproj. All four must agree — the nuspec metadata is generated from them.
-2. **Do not** add a `Directory.Packages.props` entry for a package published from this repo.
-   Every project here consumes `Core.Idempotency*` through `ProjectReference`, never
-   `PackageReference`, so a `PackageVersion` entry would be inert — and because transitive
-   pinning is enabled, a future `PackageReference` would silently resolve to the published
-   package instead of the local project. Add an entry only when a project genuinely
-   references an external package.
+2. Bump the `CoreSystem.Idempotency` `PackageVersion` in `Directory.Packages.props` **only after
+   the new core version is live on nuget.org**, and regenerate the lock files. The providers pin
+   the published core package, so a version that does not exist yet fails `--locked-mode` restore
+   in CI and at pack time. Add entries for any other external package a project genuinely
+   references; never add an entry for a provider, which is only ever referenced by tests.
 3. Update `src/Core.Idempotency/CHANGELOG.md` (Keep a Changelog + SemVer). Include a
    `Migration` section with numbered steps for breaking changes.
 4. Merge to `main`, then create and push the tag:
