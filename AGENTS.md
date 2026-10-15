@@ -166,6 +166,20 @@ dotnet test tests/Core.Idempotency.PostgreSql.IntegrationTests/Core.Idempotency.
 
 Integration tests require a working Docker daemon.
 
+**Never gate anything on `dotnet list package --vulnerable`.** Measured on this
+repository, it exits 0 even when it reports a High advisory, in both text and JSON,
+so it can never fail a build and its output can only mislead. The real gate is the
+restore: `NuGetAudit` with `NuGetAuditMode=all` plus `TreatWarningsAsErrors` turns
+NU1902/NU1903 into a restore failure. Do not add the report back "just to show it".
+
+**A green CI run does not mean the package is correct.** `publish.yml` verifies the
+restore, the build, the tests, that `pack` produced exactly one file with the
+expected name, and that the version is not already published. It never opens the
+`.nupkg`. README, LICENSE, the `<readme>` declaration and the existence of pinned
+dependencies are checked only by `publish-package.bat`, which is gitignored and
+therefore local-only. It is nonetheless the sole gate against the class of defect
+2.0.0 shipped, so treat it as production code.
+
 ## CI/CD
 
 | Workflow | Trigger | What it does |
@@ -200,6 +214,7 @@ Never edit `packages.lock.json` by hand.
 4. Merge to `main`, then create and push the tag:
    `git tag -a Core.Idempotency/v2.1.0 -m "CoreSystem.Idempotency 2.1.0"` and push it.
    The tag **is** the release; `publish.yml` re-reads the version from it.
+   `RELEASING.md` holds the full command reference.
 5. Watch it: `gh run watch`.
 
 Rules and caveats:

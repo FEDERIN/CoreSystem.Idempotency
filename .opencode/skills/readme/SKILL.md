@@ -57,8 +57,21 @@ deliberately. Do not invent new top-level sections.
 
 Keep exactly one `README.md` per project and pack that file. Do not maintain a
 second `README_NUGET.md` / `README_PACKAGE.md` alongside it — the packed file is the
-one consumers see, and two files drift apart. See the `nuget-release` skill for the
-csproj wiring.
+one consumers see, and two files drift apart.
+
+The csproj wiring that ships it at the package root:
+
+```xml
+<PropertyGroup>
+  <PackageReadmeFile>README.md</PackageReadmeFile>
+</PropertyGroup>
+<ItemGroup>
+  <None Include="README.md" Pack="true" PackagePath="\" />
+</ItemGroup>
+```
+
+Without this the build still succeeds and the package publishes without a README,
+because nuget.org renders the packed file rather than one in the repository.
 
 ## Accuracy is part of structure
 
