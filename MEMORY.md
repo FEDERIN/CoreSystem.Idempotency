@@ -73,13 +73,17 @@ Never store secrets, tokens, or personal data.
 - **Published versions are immutable.** Check nuget.org before tagging.
 - **Do not fake Redis/PostgreSQL in unit tests.** The Testcontainers integration suites are the
   intended place for storage behavior.
+- **A `null` `PackageVersion` audit is not evidence of an unused pin.** `Microsoft.SourceLink.GitHub`
+  looked unused because it is referenced from `src/Directory.Build.props`, not from a csproj. Scan
+  the props files too before calling a pin inert.
 
 ## Known gaps
 
 - `publish-package.bat` and `generate-lock-files.bat` are local helpers only: they are gitignored,
   so they never reach another clone and their fixes are invisible to CI. Review them by reading
   them; the repository rules they implement live in `AGENTS.md` and `.opencode/`.
-- About 27 inert central package pins remain, including `xunit` 2.5.3 beside the `xunit.v3`
-  actually used, and `Microsoft.AspNetCore.Http` 2.3.0.
+- Exactly one inert central package pin remains: `StackExchange.Redis`, left over from before
+  the Redis provider switched to `CoreSystem.Redis`. 19 pins are declared, 18 are used.
+  Do not trust the old count of ~27; it was stale and cost time.
 - Undecided: whether to unlist 2.0.0 on nuget.org, and whether the PostgreSQL provider should
   ever offer opt-in schema creation.
