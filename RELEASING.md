@@ -28,8 +28,8 @@ A provider pins a `CoreSystem.Idempotency` version that must already be live.
 
 ```bash
 # the version in the csproj must already be the one being released
-grep -E "<Version>|<AssemblyVersion>|<FileVersion>|<InformationalVersion>" \
-  src/Core.Idempotency.Redis/Core.Idempotency.Redis.csproj
+Select-String -Path "src/Core.Idempotency.Redis/Core.Idempotency.Redis.csproj" `
+  -Pattern '<Version>|<AssemblyVersion>|<FileVersion>|<InformationalVersion>'
 
 # the version must not be published yet
 curl -s https://api.nuget.org/v3-flatcontainer/coreSystem.idempotency.redis/index.json
