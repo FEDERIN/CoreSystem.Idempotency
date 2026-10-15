@@ -20,12 +20,12 @@ Never store secrets, tokens, or personal data.
   `main` at `dcc6ce5` (PR #10).
 - Docker Desktop is not started by default here; the integration suites need it and
   fail with `DockerUnavailableException` until it is running.
-- **Releases are run by hand with `publish-package.bat`, no agent.** Rationale: the script already
-  performs every gate (version not published, no existing tag, clean tree, on main, sync, build,
-  tests, `.nupkg` contents, published dependencies), it costs zero tokens, and an agent adds
-  ~2.3k tokens of repeated boilerplate per run to re-derive what the script decides mechanically.
-  Reserve an agent for the judgement calls: which version to cut, interpreting a failed gate,
-  and whether to unlist 2.0.0.
+- **Releases are run by hand with `publish-package.bat`, no agent, no `/release` command.**
+  The `nuget-release` skill and `release.md` were deleted: with the script performing every
+  gate, an agent only re-derived mechanical decisions for ~2.3k tokens of repeated
+  instructions per run, and two files that describe the process drift from the process.
+  Reserve an agent for the judgement calls: which version to cut, interpreting a failed
+  gate, and whether to unlist 2.0.0. Those rules live in `AGENTS.md`, not in a skill.
 - **`publish.yml` never inspects the `.nupkg`.** It verifies restore `--locked-mode`, build, tests,
   that pack produced exactly one file with the expected name, and gets a 409 on a duplicate
   version. It does not check README, LICENSE, the nuspec `<readme>` declaration or whether the

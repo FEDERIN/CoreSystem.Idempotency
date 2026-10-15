@@ -78,5 +78,5 @@ history before changing a section name.
 ## Verify the packages are consumable as advertised
 
 After a split, confirm the new package builds standalone, packs correctly, and that
-its README shows the right install command and namespace. See the `nuget-release`
-and `docs-accuracy` skills.
+its README shows the right install command and namespace. See the `docs-accuracy`
+and `readme` skills.

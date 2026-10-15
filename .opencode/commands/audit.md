@@ -4,7 +4,7 @@ description: Review the whole repo against the engineering checklist (quality, d
 
 Run a full review of this repository using every skill in `.opencode/skills/`.
 
-Load, in this order: `dotnet-quality-gates`, `docs-accuracy`, `nuget-release`,
+Load, in this order: `dotnet-quality-gates`, `docs-accuracy`,
 `package-split-decisions`, `file-encoding`, `git-branch-workflow`, `readme`.
 
 Check current state first, then report only what is actually wrong or missing, ordered
