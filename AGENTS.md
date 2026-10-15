@@ -214,6 +214,7 @@ Never edit `packages.lock.json` by hand.
 4. Merge to `main`, then create and push the tag:
    `git tag -a Core.Idempotency/v2.1.0 -m "CoreSystem.Idempotency 2.1.0"` and push it.
    The tag **is** the release; `publish.yml` re-reads the version from it.
+   `RELEASING.md` holds the full command reference.
 5. Watch it: `gh run watch`.
 
 Rules and caveats:
