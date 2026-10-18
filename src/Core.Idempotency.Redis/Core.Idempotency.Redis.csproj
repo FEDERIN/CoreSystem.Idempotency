@@ -9,17 +9,16 @@
 
 		<PackageId>CoreSystem.Idempotency.Redis</PackageId>
 
-		<Version>2.0.1</Version>
-		<AssemblyVersion>2.0.1</AssemblyVersion>
-		<FileVersion>2.0.1.0</FileVersion>
-		<InformationalVersion>2.0.1</InformationalVersion>
+		<Version>2.0.2</Version>
+		<AssemblyVersion>2.0.2</AssemblyVersion>
+		<FileVersion>2.0.2.0</FileVersion>
+		<InformationalVersion>2.0.2</InformationalVersion>
 
 		<PackageReleaseNotes>
-			Corrections release. 2.0.0 shipped a README example that did not compile:
-			AddCoreIdempotencyRedis was documented as parameterless, but it requires a
-			configuration delegate.
-			Also: XML documentation is published, SourceLink is enabled, and the package
-			metadata URLs were corrected.
+			Dependency refresh. No code or API changes.
+			CoreSystem.Redis 1.0.3 to 1.0.4, which raises its own StackExchange.Redis floor
+			to 2.13.17, so the central pin moves with it. Also the refreshed transitive graph
+			(Microsoft.Extensions.*, OpenTelemetry.Extensions.Hosting 1.20.0).
 		</PackageReleaseNotes>
 
 		<Authors>Federin Pastor Gutierrez Ortiz</Authors>
@@ -66,5 +65,4 @@
 		<InternalsVisibleTo Include="Core.Idempotency.Redis.IntegrationTests" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
 	</ItemGroup>
-
 </Project>

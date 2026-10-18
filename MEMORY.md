@@ -4,17 +4,16 @@ Working state of CoreSystem.Idempotency. Read this first, then `AGENTS.md` for t
 Keep it under ~50 lines. If something becomes a standing rule, move it to `AGENTS.md` and drop it here.
 Never store secrets, tokens, or personal data.
 
-## Current state (2026-10-14)
+## Current state (2026-10-18)
 
-- Published on nuget.org: core `CoreSystem.Idempotency` at **2.0.1** (tag
-  `Core.Idempotency/v2.0.1`); both providers still at **2.0.0**, whose versions had
-  broken docs and a PostgreSQL schema missing `state`/`lease_id`.
-- Branch `release/2.0.1-providers` prepares the two provider releases: the providers now
-  consume the published core through a pinned `PackageReference` instead of a
-  `ProjectReference`. Verified in a detached worktree of the commit: restore
-  `--locked-mode`, build with 0 warnings, 3 unit + 2 integration projects green.
-- `main` at `9ca13b6` (PR #9, publish workflow). The tag sequence still pending:
-  `Core.Idempotency.Redis/v2.0.1` then `Core.Idempotency.PostgreSql/v2.0.1`.
+- Published on nuget.org: all three at **2.0.1** (core, Redis, PostgreSql).
+- Branch `chore/dependency-refresh` prepares **2.0.2** for both providers: a dependency
+  refresh only, no code or API changes. Core stays at 2.0.1. Not yet tagged.
+- Pending tags once merged, in this order: `Core.Idempotency.Redis/v2.0.2`, then
+  `Core.Idempotency.PostgreSql/v2.0.2`.
+- Branch `release/2.0.1-providers` is what established the pinned core dependency; that
+  decision is settled and a `ProjectReference` revert must not come back.
+- `main` was at `c3888d3` (PR #13) when 2.0.2 was prepared.
 - **2.0.1 is fully released**: core, Redis and PostgreSql all live on nuget.org, tagged
   `Core.Idempotency/v2.0.1`, `Core.Idempotency.Redis/v2.0.1`, `Core.Idempotency.PostgreSql/v2.0.1`.
   `main` at `dcc6ce5` (PR #10).
@@ -70,7 +69,11 @@ Never store secrets, tokens, or personal data.
 - **`git stash push --keep-index`** is useful for building only what a PR stages, but note that
   untracked files are *not* stashed, so an untracked props file can enable settings the build
   otherwise would not have.
-- **Published versions are immutable.** Check nuget.org before tagging.
+- **A transitive pin is a floor, not a preference.** `CoreSystem.Redis` 1.0.4 raised its own
+  `StackExchange.Redis` floor to 2.13.17 and the central pin had to move with it, or NU1109
+  blocks the restore. When a package raises a transitive floor, raise the pin in the same commit.
+- **Published versions are immutable.** Check nuget.org before tagging. 2.0.1 was already live
+  for all three packages when 2.0.2 was cut, so the csproj version had to move first.
 - **Do not fake Redis/PostgreSQL in unit tests.** The Testcontainers integration suites are the
   intended place for storage behavior.
 - **A `null` `PackageVersion` audit is not evidence of an unused pin.** `Microsoft.SourceLink.GitHub`
@@ -82,8 +85,10 @@ Never store secrets, tokens, or personal data.
 - `publish-package.bat` and `generate-lock-files.bat` are local helpers only: they are gitignored,
   so they never reach another clone and their fixes are invisible to CI. Review them by reading
   them; the repository rules they implement live in `AGENTS.md` and `.opencode/`.
-- Exactly one inert central package pin remains: `StackExchange.Redis`, left over from before
-  the Redis provider switched to `CoreSystem.Redis`. 19 pins are declared, 18 are used.
-  Do not trust the old count of ~27; it was stale and cost time.
+- Exactly one pin has no direct `PackageReference`: `StackExchange.Redis`. It is not inert, it
+  only participates as a `CentralTransitive` floor. `CoreSystem.Redis` 1.0.4 (published
+  2026-10-18) raised its own floor to `StackExchange.Redis >= 2.13.17`, so the pin had to move
+  with it or NU1109 blocks the restore. Do not trust the old count of ~27 pins; it was stale.
+  19 pins are declared, 18 have a direct reference.
 - Undecided: whether to unlist 2.0.0 on nuget.org, and whether the PostgreSQL provider should
   ever offer opt-in schema creation.

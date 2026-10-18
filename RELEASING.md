@@ -35,8 +35,8 @@ Select-String -Path "src/Core.Idempotency.Redis/Core.Idempotency.Redis.csproj" `
 curl -s https://api.nuget.org/v3-flatcontainer/coreSystem.idempotency.redis/index.json
 
 # the tag must not exist, locally or on origin
-git tag -l "Core.Idempotency.Redis/v2.0.1"
-git ls-remote --tags origin "Core.Idempotency.Redis/v2.0.1"
+git tag -l "Core.Idempotency.Redis/v2.0.2"
+git ls-remote --tags origin "Core.Idempotency.Redis/v2.0.2"
 
 # clean tree, on main
 git status --short
@@ -51,8 +51,8 @@ The tag is the release. `publish.yml` re-reads the version from it.
 git checkout main
 git pull origin main
 
-git tag -a Core.Idempotency.Redis/v2.0.1 -m "CoreSystem.Idempotency.Redis 2.0.1"
-git push origin Core.Idempotency.Redis/v2.0.1
+git tag -a Core.Idempotency.Redis/v2.0.2 -m "CoreSystem.Idempotency.Redis 2.0.2"
+git push origin Core.Idempotency.Redis/v2.0.2
 ```
 
 Push only that tag.
@@ -74,7 +74,7 @@ only in this clone. The script runs every pre-flight check above, plus build,
 tests, and `.nupkg` verification, and refuses to tag if any of them fail:
 
 ```bat
-publish-package.bat Core.Idempotency.Redis 2.0.1
+publish-package.bat Core.Idempotency.Redis 2.0.2
 generate-lock-files.bat
 ```
 
