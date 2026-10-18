@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [2.0.2] - 2026-10-18
+
+Dependency refresh. No code or API changes.
+
+### Changed
+
+- `CoreSystem.Observability.Abstractions` 1.0.1 to 1.0.2.
+- `CoreSystem.Serialization` 1.2.3 to 1.2.4, which pulls MessagePack 3.1.8 to 3.1.12 and
+  protobuf-net 3.2.56 to 3.4.30.
+- `OpenTelemetry.Extensions.Hosting` 1.19.0 to 1.20.0.
+- Refreshed transitive graph: `Microsoft.Extensions.Diagnostics.HealthChecks` 8.0.28 to
+  8.0.32 and the `System.Diagnostics.DiagnosticSource` 10.0.0 chain.
+
+The point of this release is that the dependency floors declared in the nuspec now match
+the versions the assembly was actually built and tested against. 2.0.1 declared
+`CoreSystem.Observability.Abstractions >= 1.0.1` and `CoreSystem.Serialization >= 1.2.3`
+while the pinned versions had moved on.
+
+---
+
 ## [2.0.1] - 2026-10-13
 
 Corrections release. Version 2.0.0 shipped documentation that did not compile and a
