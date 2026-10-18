@@ -10,22 +10,15 @@
 
 		<PackageId>CoreSystem.Idempotency.PostgreSql</PackageId>
 
-		<Version>2.0.1</Version>
-		<AssemblyVersion>2.0.1</AssemblyVersion>
-		<FileVersion>2.0.1.0</FileVersion>
-		<InformationalVersion>2.0.1</InformationalVersion>
+		<Version>2.0.2</Version>
+		<AssemblyVersion>2.0.2</AssemblyVersion>
+		<FileVersion>2.0.2.0</FileVersion>
+		<InformationalVersion>2.0.2</InformationalVersion>
 
 		<PackageReleaseNotes>
-			Corrections release. 2.0.0 shipped documentation that did not compile and a
-			schema that was missing columns:
-			- AddCoreIdempotencyPostgreSql was documented as parameterless, but it requires
-			  a configuration delegate.
-			The provider never created its schema. The documented idempotency_keys table
-			  predated the lease contract, omitting state and lease_id, and failed on the
-			  first request.
-			The package now ships scripts/postgres.sql so consumers can create the table.
-			Also: XML documentation is published, SourceLink is enabled, and the package
-			metadata URLs were corrected.
+			Dependency refresh. No code or API changes.
+			Dapper 2.1.79 to 2.1.89 and Npgsql 8.0.3 to 8.0.9, plus the refreshed transitive
+			graph (Microsoft.Extensions.* and OpenTelemetry.Extensions.Hosting 1.20.0).
 		</PackageReleaseNotes>
 
 		<Authors>Federin Pastor Gutierrez Ortiz</Authors>
