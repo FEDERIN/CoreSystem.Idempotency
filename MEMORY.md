@@ -7,10 +7,13 @@ Never store secrets, tokens, or personal data.
 ## Current state (2026-10-18)
 
 - Published on nuget.org: all three at **2.0.1** (core, Redis, PostgreSql).
-- Branch `chore/dependency-refresh` prepares **2.0.2** for both providers: a dependency
-  refresh only, no code or API changes. Core stays at 2.0.1. Not yet tagged.
-- Pending tags once merged, in this order: `Core.Idempotency.Redis/v2.0.2`, then
-  `Core.Idempotency.PostgreSql/v2.0.2`.
+- Branch `chore/core-2.0.2` (PR #15) cuts **all three** packages to **2.0.2**: a dependency
+  refresh only, no code or API changes. Not yet tagged.
+- `Directory.Packages.props` still pins the core at **2.0.1**. Forced: a 2.0.2 pin cannot restore
+  until 2.0.2 is on nuget.org, so `--locked-mode` would fail and the release would deadlock.
+  Raise it in a later commit if a tighter floor is wanted.
+- Pending tags once merged, in this order: `Core.Idempotency/v2.0.2`, then
+  `Core.Idempotency.Redis/v2.0.2`, then `Core.Idempotency.PostgreSql/v2.0.2`.
 - Branch `release/2.0.1-providers` is what established the pinned core dependency; that
   decision is settled and a `ProjectReference` revert must not come back.
 - `main` was at `c3888d3` (PR #13) when 2.0.2 was prepared.
@@ -72,6 +75,10 @@ Never store secrets, tokens, or personal data.
 - **A transitive pin is a floor, not a preference.** `CoreSystem.Redis` 1.0.4 raised its own
   `StackExchange.Redis` floor to 2.13.17 and the central pin had to move with it, or NU1109
   blocks the restore. When a package raises a transitive floor, raise the pin in the same commit.
+- **Check `git branch --show-current` immediately before every commit.** PR #14 merged while
+  work was in flight, the checkout moved to `main`, and a follow-up commit landed there.
+  `main` is protected so the push failed, but the commit existed locally on `main`. Recovery:
+  `git branch <new> <sha>` → `git reset --hard origin/main` → `git checkout <new>`.
 - **Published versions are immutable.** Check nuget.org before tagging. 2.0.1 was already live
   for all three packages when 2.0.2 was cut, so the csproj version had to move first.
 - **Do not fake Redis/PostgreSQL in unit tests.** The Testcontainers integration suites are the
