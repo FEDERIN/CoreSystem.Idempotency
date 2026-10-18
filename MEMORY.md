@@ -7,12 +7,10 @@ Never store secrets, tokens, or personal data.
 ## Current state (2026-10-18)
 
 - Published on nuget.org: all three at **2.0.1** (core, Redis, PostgreSql).
-- Branch `chore/core-2.0.2` (PR #15) cuts **all three** packages to **2.0.2**: a dependency
-  refresh only, no code or API changes. Not yet tagged.
-- `Directory.Packages.props` still pins the core at **2.0.1**. Forced: a 2.0.2 pin cannot restore
-  until 2.0.2 is on nuget.org, so `--locked-mode` would fail and the release would deadlock.
-  Raise it in a later commit if a tighter floor is wanted.
-- Pending tags once merged, in this order: `Core.Idempotency/v2.0.2`, then
+- **Core `CoreSystem.Idempotency` 2.0.2 is live on nuget.org** (PR #15, tag `Core.Idempotency/v2.0.2`).
+- Branch `chore/pin-core-2.0.2` raises the central pin to the core 2.0.2 and regenerates the lock
+  files. The two provider packages declare `CoreSystem.Idempotency >= 2.0.2` once it is merged.
+- Still pending: tag and publish the providers, in this order —
   `Core.Idempotency.Redis/v2.0.2`, then `Core.Idempotency.PostgreSql/v2.0.2`.
 - Branch `release/2.0.1-providers` is what established the pinned core dependency; that
   decision is settled and a `ProjectReference` revert must not come back.
@@ -75,9 +73,14 @@ Never store secrets, tokens, or personal data.
 - **A transitive pin is a floor, not a preference.** `CoreSystem.Redis` 1.0.4 raised its own
   `StackExchange.Redis` floor to 2.13.17 and the central pin had to move with it, or NU1109
   blocks the restore. When a package raises a transitive floor, raise the pin in the same commit.
-- **Check `git branch --show-current` immediately before every commit.** PR #14 merged while
-  work was in flight, the checkout moved to `main`, and a follow-up commit landed there.
-  `main` is protected so the push failed, but the commit existed locally on `main`. Recovery:
+- **The core pin must move in its own PR, after the core is published.** Raising it in the same
+  PR as the version bump deadlocks: `--locked-mode` asks nuget.org for a version that does not
+  exist, CI goes red, the core never publishes, the pin can never be satisfied. This is why the
+  2.0.2 release took three PRs (#14 providers, #15 core, #16 pin).
+- **The checkout moves on its own when a PR merges mid-session.** Check
+  `git branch --show-current` immediately before every commit. PR #14 merged while work was in
+  flight, the checkout moved to `main`, and a follow-up commit landed there. `main` is protected
+  so the push failed, but the commit existed locally on `main`. Recovery:
   `git branch <new> <sha>` → `git reset --hard origin/main` → `git checkout <new>`.
 - **Published versions are immutable.** Check nuget.org before tagging. 2.0.1 was already live
   for all three packages when 2.0.2 was cut, so the csproj version had to move first.

@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="CoreSystem.Http" Version="1.1.0" />
-    <PackageVersion Include="CoreSystem.Idempotency" Version="2.0.1" />
+    <PackageVersion Include="CoreSystem.Idempotency" Version="2.0.2" />
     <PackageVersion Include="CoreSystem.Observability.Abstractions" Version="1.0.2" />
     <PackageVersion Include="CoreSystem.Redis" Version="1.0.4" />
     <PackageVersion Include="CoreSystem.Serialization" Version="1.2.4" />
