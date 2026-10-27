@@ -43,10 +43,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="..\..\LICENSE" Pack="true" PackagePath="" />
-	</ItemGroup>
-	
-	<ItemGroup>
 		<InternalsVisibleTo Include="Core.Idempotency.Redis.UnitTests" />
 		<InternalsVisibleTo Include="Core.Idempotency.Redis.IntegrationTests" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
