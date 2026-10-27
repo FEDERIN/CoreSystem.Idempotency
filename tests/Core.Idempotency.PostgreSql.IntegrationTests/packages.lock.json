@@ -531,7 +531,7 @@
       "CoreSystem.Idempotency.PostgreSql": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.0.2, )",
+          "CoreSystem.Idempotency": "[2.1.0, )",
           "Dapper": "[2.1.89, )",
           "Npgsql": "[10.0.3, )"
         }
@@ -1139,7 +1139,7 @@
       "CoreSystem.Idempotency.PostgreSql": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.0.2, )",
+          "CoreSystem.Idempotency": "[2.1.0, )",
           "Dapper": "[2.1.89, )",
           "Npgsql": "[8.0.9, )"
         }
@@ -1738,7 +1738,7 @@
       "CoreSystem.Idempotency.PostgreSql": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.0.2, )",
+          "CoreSystem.Idempotency": "[2.1.0, )",
           "Dapper": "[2.1.89, )",
           "Npgsql": "[9.0.5, )"
         }

@@ -1,17 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		
 		<PackageId>CoreSystem.Idempotency</PackageId>
 
-		<Version>2.0.2</Version>
-		<AssemblyVersion>2.0.2</AssemblyVersion>
-		<FileVersion>2.0.2.0</FileVersion>
-		<InformationalVersion>2.0.2</InformationalVersion>
+		<Version>2.1.0</Version>
+		<AssemblyVersion>2.1.0</AssemblyVersion>
+		<FileVersion>2.1.0.0</FileVersion>
+		<InformationalVersion>2.1.0</InformationalVersion>
 
 		<PackageReleaseNotes>
+			2.1.0: Multi-targeting release. The package now ships net8.0, net9.0 and net10.0 assets instead of net8.0 only, so a project on .NET 9 or .NET 10 gets an assembly compiled for its own target framework.
 			Dependency refresh. No code or API changes.
 			CoreSystem.Observability.Abstractions 1.0.1 to 1.0.2,
 			CoreSystem.Serialization 1.2.3 to 1.2.4 and
