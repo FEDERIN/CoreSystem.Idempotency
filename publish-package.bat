@@ -260,13 +260,13 @@ echo [6/8] Running tests...
 
 echo.
 echo       %TESTS%
-dotnet test "%TESTS%" -c Release
+dotnet test --project "%TESTS%" -c Release
 if errorlevel 1 goto :fail
 
 if defined INTEGRATION_TESTS (
     echo.
     echo       !INTEGRATION_TESTS!
-    dotnet test "!INTEGRATION_TESTS!" -c Release
+    dotnet test --project "!INTEGRATION_TESTS!" -c Release
     if errorlevel 1 goto :fail
 ) else (
     echo.

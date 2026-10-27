@@ -529,15 +529,6 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "CoreSystem.Idempotency": {
-        "type": "Project",
-        "dependencies": {
-          "CoreSystem.Http": "[1.2.0, )",
-          "CoreSystem.Observability.Abstractions": "[1.1.0, )",
-          "CoreSystem.Serialization": "[1.3.0, )",
-          "OpenTelemetry.Extensions.Hosting": "[1.20.1, )"
-        }
-      },
       "CoreSystem.Idempotency.Redis": {
         "type": "Project",
         "dependencies": {
@@ -550,6 +541,18 @@
         "requested": "[1.2.0, )",
         "resolved": "1.2.0",
         "contentHash": "yQe5W1tvTvGPxP1z4WbHQODi6mExBhH9Z8pfSR+eljSu0pb1rin71QTEScMgPfpPlGChdHVjYZzT7TKwVeQmhg=="
+      },
+      "CoreSystem.Idempotency": {
+        "type": "CentralTransitive",
+        "requested": "[2.1.0, )",
+        "resolved": "2.1.0",
+        "contentHash": "aQIF4EwW77rFkCQtb91t7zz993LWL6sniNFrGWY0OgE5hKOi0qrNevpEDFmZ4AFRAsRX9dX7NmsfWklxZLmDzg==",
+        "dependencies": {
+          "CoreSystem.Http": "1.2.0",
+          "CoreSystem.Observability.Abstractions": "1.1.0",
+          "CoreSystem.Serialization": "1.3.0",
+          "OpenTelemetry.Extensions.Hosting": "1.20.1"
+        }
       },
       "CoreSystem.Observability.Abstractions": {
         "type": "CentralTransitive",
@@ -1155,15 +1158,6 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "CoreSystem.Idempotency": {
-        "type": "Project",
-        "dependencies": {
-          "CoreSystem.Http": "[1.2.0, )",
-          "CoreSystem.Observability.Abstractions": "[1.1.0, )",
-          "CoreSystem.Serialization": "[1.3.0, )",
-          "OpenTelemetry.Extensions.Hosting": "[1.20.1, )"
-        }
-      },
       "CoreSystem.Idempotency.Redis": {
         "type": "Project",
         "dependencies": {
@@ -1176,6 +1170,18 @@
         "requested": "[1.2.0, )",
         "resolved": "1.2.0",
         "contentHash": "yQe5W1tvTvGPxP1z4WbHQODi6mExBhH9Z8pfSR+eljSu0pb1rin71QTEScMgPfpPlGChdHVjYZzT7TKwVeQmhg=="
+      },
+      "CoreSystem.Idempotency": {
+        "type": "CentralTransitive",
+        "requested": "[2.1.0, )",
+        "resolved": "2.1.0",
+        "contentHash": "aQIF4EwW77rFkCQtb91t7zz993LWL6sniNFrGWY0OgE5hKOi0qrNevpEDFmZ4AFRAsRX9dX7NmsfWklxZLmDzg==",
+        "dependencies": {
+          "CoreSystem.Http": "1.2.0",
+          "CoreSystem.Observability.Abstractions": "1.1.0",
+          "CoreSystem.Serialization": "1.3.0",
+          "OpenTelemetry.Extensions.Hosting": "1.20.1"
+        }
       },
       "CoreSystem.Observability.Abstractions": {
         "type": "CentralTransitive",
@@ -1769,15 +1775,6 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "CoreSystem.Idempotency": {
-        "type": "Project",
-        "dependencies": {
-          "CoreSystem.Http": "[1.2.0, )",
-          "CoreSystem.Observability.Abstractions": "[1.1.0, )",
-          "CoreSystem.Serialization": "[1.3.0, )",
-          "OpenTelemetry.Extensions.Hosting": "[1.20.1, )"
-        }
-      },
       "CoreSystem.Idempotency.Redis": {
         "type": "Project",
         "dependencies": {
@@ -1790,6 +1787,18 @@
         "requested": "[1.2.0, )",
         "resolved": "1.2.0",
         "contentHash": "yQe5W1tvTvGPxP1z4WbHQODi6mExBhH9Z8pfSR+eljSu0pb1rin71QTEScMgPfpPlGChdHVjYZzT7TKwVeQmhg=="
+      },
+      "CoreSystem.Idempotency": {
+        "type": "CentralTransitive",
+        "requested": "[2.1.0, )",
+        "resolved": "2.1.0",
+        "contentHash": "aQIF4EwW77rFkCQtb91t7zz993LWL6sniNFrGWY0OgE5hKOi0qrNevpEDFmZ4AFRAsRX9dX7NmsfWklxZLmDzg==",
+        "dependencies": {
+          "CoreSystem.Http": "1.2.0",
+          "CoreSystem.Observability.Abstractions": "1.1.0",
+          "CoreSystem.Serialization": "1.3.0",
+          "OpenTelemetry.Extensions.Hosting": "1.20.1"
+        }
       },
       "CoreSystem.Observability.Abstractions": {
         "type": "CentralTransitive",
