@@ -1,13 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-
+		
 		<PackageId>CoreSystem.Idempotency</PackageId>
 
 		<Version>2.0.2</Version>
@@ -23,19 +19,12 @@
 			transitive graph. The declared dependency floors now match the versions
 			the assembly was built and tested against.
 		</PackageReleaseNotes>
-
-		<Authors>Federin Pastor Gutierrez Ortiz</Authors>
-
 		<Description>
 			Production-ready idempotency framework for ASP.NET Core featuring duplicate suppression, request fingerprinting, response replay, OpenTelemetry integration, and a provider-based storage architecture.
 		</Description>
 
-		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem.Idempotency</RepositoryUrl>
 		<PackageProjectUrl>https://federin.github.io/CoreSystem.Idempotency/</PackageProjectUrl>
-
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-
+		
 		<PackageTags>
 			Idempotency;
 			ASP.NET Core;
@@ -64,11 +53,7 @@
     <PackageReference Include="CoreSystem.Serialization" />
 	<PackageReference Include="OpenTelemetry.Extensions.Hosting" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
-	  <None Include="LICENSE" Pack="true" PackagePath="\" />
-  </ItemGroup>
-
+	
   <ItemGroup>
 	<FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>

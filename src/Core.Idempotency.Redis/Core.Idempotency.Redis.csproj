@@ -1,11 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
 		<PackageId>CoreSystem.Idempotency.Redis</PackageId>
 
@@ -20,14 +16,10 @@
 			to 2.13.17, so the central pin moves with it. Also the refreshed transitive graph
 			(Microsoft.Extensions.*, OpenTelemetry.Extensions.Hosting 1.20.0).
 		</PackageReleaseNotes>
-
-		<Authors>Federin Pastor Gutierrez Ortiz</Authors>
-
 		<Description>
 			Production-ready Redis storage provider for CoreSystem.Idempotency, providing high-performance distributed persistence through the IIdempotencyStorage abstraction.
 		</Description>
-
-		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem.Idempotency</RepositoryUrl>
+		
 		<PackageProjectUrl>https://federin.github.io/CoreSystem.Idempotency/Providers/Redis/</PackageProjectUrl>
 
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -48,12 +40,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CoreSystem.Idempotency" />
 		<PackageReference Include="CoreSystem.Redis" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -64,5 +51,9 @@
 		<InternalsVisibleTo Include="Core.Idempotency.Redis.UnitTests" />
 		<InternalsVisibleTo Include="Core.Idempotency.Redis.IntegrationTests" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
+	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\Core.Idempotency\Core.Idempotency.csproj" />
 	</ItemGroup>
 </Project>

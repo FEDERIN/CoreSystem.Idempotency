@@ -4,10 +4,13 @@
 
 It is the recommended provider for production workloads that require low latency, horizontal scalability, and automatic expiration of idempotency entries.
 
+The package targets .NET 8, .NET 9 and .NET 10, and ships an assembly for each
+of those frameworks.
+
 ![NuGet](https://img.shields.io/nuget/v/CoreSystem.Idempotency.Redis?style=for-the-badge)
 ![Downloads](https://img.shields.io/nuget/dt/CoreSystem.Idempotency.Redis?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
-![.NET](https://img.shields.io/badge/.NET-8.0-blue?style=for-the-badge)
+![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%209.0%20%7C%2010.0-blue?style=for-the-badge)
 ![Redis](https://img.shields.io/badge/Redis-7+-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 
 ---

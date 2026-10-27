@@ -1,0 +1,58 @@
+<Project>
+
+  <!--
+    Repository-wide MSBuild settings.
+
+    MSBuild stops at the first Directory.Build.props it finds walking up from a
+    project, so this file does not apply on its own: src/Directory.Build.props
+    and tests/Directory.Build.props import it explicitly and layer their own
+    settings on top.
+  -->
+
+  <!-- Untracked local overrides, e.g. UseLocalProjectReferences=true. -->
+  <Import Project="$(MSBuildThisFileDirectory)Directory.Build.local.props"
+          Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.local.props')" />
+
+  <PropertyGroup>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      Quality gates. TreatWarningsAsErrors is enabled across the repository:
+      src/ carries the XML documentation requirement, tests/ opts out of it
+      and of CA1707 through tests/Directory.Build.props.
+    -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      Audit direct AND transitive dependencies. The default is Direct only,
+      so without this a transitive advisory never becomes an NU1902/NU1903
+      warning and TreatWarningsAsErrors cannot fail the build on it.
+      Together with TreatWarningsAsErrors this makes restore the audit gate.
+    -->
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      Locked restore against the committed packages.lock.json files.
+
+      UseLocalProjectReferences (set in the untracked local file) switches the
+      providers from the published core package to a project reference; in that
+      mode the lock files do not apply and restore must stay unlocked.
+    -->
+    <UseLocalProjectReferences Condition="'$(UseLocalProjectReferences)' == ''">false</UseLocalProjectReferences>
+    <RestorePackagesWithLockFile Condition="'$(UseLocalProjectReferences)' != 'true'">true</RestorePackagesWithLockFile>
+    <RestoreLockedMode Condition="'$(UseLocalProjectReferences)' != 'true'">true</RestoreLockedMode>
+  </PropertyGroup>
+
+</Project>

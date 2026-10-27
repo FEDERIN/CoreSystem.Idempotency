@@ -1,11 +1,11 @@
 # ⚡ CoreSystem.Idempotency
 
-CoreSystem.Idempotency is a production-ready idempotency library for ASP.NET Core and .NET 8.
+CoreSystem.Idempotency is a production-ready idempotency library for ASP.NET Core on .NET 8, 9, and 10.
 
 ![NuGet](https://img.shields.io/nuget/v/CoreSystem.Idempotency?style=for-the-badge)
 ![Downloads](https://img.shields.io/nuget/dt/CoreSystem.Idempotency?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
-![.NET](https://img.shields.io/badge/.NET-8.0-blue?style=for-the-badge)
+![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%209.0%20%7C%2010.0-blue?style=for-the-badge)
 ![OpenTelemetry](https://img.shields.io/badge/OpenTelemetry-Enabled-purple?style=for-the-badge)
 
 It suppresses concurrent duplicate requests and replays completed responses when clients retry because of timeouts, network failures, or duplicate submissions.
