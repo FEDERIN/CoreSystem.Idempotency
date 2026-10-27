@@ -38,6 +38,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="CoreSystem.Idempotency" />
 	  <PackageReference Include="Dapper" />
 	  <PackageReference Include="Npgsql" />
 	</ItemGroup>
@@ -51,9 +52,5 @@
 		<InternalsVisibleTo Include="Core.Idempotency.PostgreSql.UnitTests" />
 		<InternalsVisibleTo Include="Core.Idempotency.PostgreSql.IntegrationTests" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Core.Idempotency\Core.Idempotency.csproj" />
 	</ItemGroup>
 </Project>

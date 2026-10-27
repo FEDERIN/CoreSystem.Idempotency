@@ -38,6 +38,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CoreSystem.Idempotency" />
 		<PackageReference Include="CoreSystem.Redis" />
 	</ItemGroup>
 
@@ -49,9 +50,5 @@
 		<InternalsVisibleTo Include="Core.Idempotency.Redis.UnitTests" />
 		<InternalsVisibleTo Include="Core.Idempotency.Redis.IntegrationTests" />
 		<InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
-	</ItemGroup>
-	
-	<ItemGroup>
-	  <ProjectReference Include="..\Core.Idempotency\Core.Idempotency.csproj" />
 	</ItemGroup>
 </Project>
