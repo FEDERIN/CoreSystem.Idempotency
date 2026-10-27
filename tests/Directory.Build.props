@@ -1,0 +1,60 @@
+<Project>
+
+  <!-- Repository-wide settings: target frameworks, quality gates, locked restore. -->
+  <Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
+
+  <!--
+    Test projects are not shipped, so they carry no XML documentation
+    requirement and can relax the analyzer rules that do not fit xUnit.
+  -->
+  <PropertyGroup>
+	<ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+
+	<IsPackable>false</IsPackable>
+	<IsTestProject>true</IsTestProject>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+    <!--
+      CA1707: the xUnit convention is Method_Should_Do_Expected_When_Condition,
+      so the underscores are deliberate.
+      CA1001: xUnit owns the IClassFixture instances and disposes them; a test
+      class holding one does not become disposable itself.
+    -->
+    <NoWarn>$(NoWarn);CA1707;CA1001</NoWarn>
+
+    <!--
+      ASPDEPR004/ASPDEPR008: the integration fixtures build a TestServer from a
+      WebHostBuilder and that overload is obsolete on net10.0 only. Migrating to
+      WebApplicationFactory would need Microsoft.AspNetCore.Mvc.Testing, so the
+      deprecation is accepted here instead of failing the build.
+    -->
+    <NoWarn Condition="'$(TargetFramework)' == 'net10.0'">$(NoWarn);ASPDEPR004;ASPDEPR008</NoWarn>
+  </PropertyGroup>
+
+  <!--
+    Dependencies shared by every test project. Their versions stay in Directory.Packages.props
+    (CPM); project-specific packages (Testcontainers.Redis, Testcontainers.PostgreSql, ...)
+    stay declared in each test csproj.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="coverlet.collector">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

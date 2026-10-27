@@ -4,8 +4,19 @@ Working state of CoreSystem.Idempotency. Read this first, then `AGENTS.md` for t
 Keep it under ~50 lines. If something becomes a standing rule, move it to `AGENTS.md` and drop it here.
 Never store secrets, tokens, or personal data.
 
-## Current state (2026-10-18)
+## Current state (2026-10-26)
 
+- **In progress: migration to .NET 10 SDK with multi-targeting `net8.0;net9.0;net10.0`.**
+  `global.json` pins SDK 10.0.201 (`rollForward: latestFeature`) and
+  `Microsoft.Testing.Platform`; `dotnet test` now needs `--project <csproj>`.
+  Build and the three unit suites are green with `TreatWarningsAsErrors` on.
+- A **root `Directory.Build.props`** now exists (TFMs, quality gates, NuGetAudit,
+  locked restore). MSBuild only auto-imports the nearest props file, so `src/` and
+  `tests/` props import it explicitly; `tests/` adds `GenerateDocumentationFile=false`
+  and `NoWarn` for CA1707, CA1001 and (net10.0 only) ASPDEPR004/ASPDEPR008.
+- The providers currently reference core via `ProjectReference` (staged, uncommitted).
+  This **contradicts the published-package decision below** and must be settled before
+  cutting any release, otherwise provider nuspecs lose the `CoreSystem.Idempotency` dependency.
 - Published on nuget.org: all three at **2.0.1** (core, Redis, PostgreSql).
 - **Core `CoreSystem.Idempotency` 2.0.2 is live on nuget.org** (PR #15, tag `Core.Idempotency/v2.0.2`).
 - Branch `chore/pin-core-2.0.2` raises the central pin to the core 2.0.2 and regenerates the lock
@@ -52,6 +63,8 @@ Never store secrets, tokens, or personal data.
   both, never just one.
 - **`src/Directory.Build.props` exists and is scoped to `src/`.** It enables XML docs, SourceLink and
   embedded PDBs. Rationale: consumers need IntelliSense; test projects would only collect CS1591.
+  Since the .NET 10 migration it imports the root `Directory.Build.props`, which holds the shared
+  TFMs and quality gates; do not duplicate settings in both.
 
 ## Mistakes to avoid
 

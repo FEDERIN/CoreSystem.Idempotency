@@ -1,35 +1,39 @@
 <Project>
+	<Import Project="$(MSBuildThisFileDirectory)..\Directory.Build.props" />
 
-  <!--
-    Shared NuGet metadata for the shipped packages.
+	<PropertyGroup>
+		<!-- Package metadata -->
+		<Authors>Federin Pastor Gutierrez Ortiz</Authors>
+		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem.Idempotency</RepositoryUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 
-    Scoped to src/ on purpose. Enable GenerateDocumentationFile only where the
-    XML documentation actually ships; turning it on repo-wide would emit CS1591
-    across every test project for no consumer benefit.
-  -->
+		<!-- Build configuration -->
+		<OutputType>Library</OutputType>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 
-  <PropertyGroup>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-    <Deterministic>true</Deterministic>
+		<!-- Documentation and packaging -->
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	</PropertyGroup>
+	<ItemGroup>
+		<!--
+			PackageReadmeFile names README.md inside the package, so the packed
+			file must be the README of the project being packed, not the one at
+			the repository root. Using MSBuildThisFileDirectory here would put
+			the root README inside every package.
+		-->
+		<None Include="$(MSBuildProjectDirectory)\README.md"
+			  Pack="true"
+			  PackagePath="\" />
 
-    <!--
-      Embed the PDB in the assembly instead of shipping a loose .pdb file.
-
-      SourceLink lives in the PDB, so without it consumers stepping through the
-      package from nuget.org land in decompiled code rather than the original
-      source. Embedding keeps the package to a single file per assembly and
-      needs no extra artifact or publish step, at the cost of a larger DLL.
-    -->
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <!-- PrivateAssets: SourceLink is a build-time concern and must never become
+		<None Include="$(MSBuildThisFileDirectory)..\LICENSE"
+			  Pack="true"
+			  PackagePath="\" />
+	</ItemGroup>
+	<ItemGroup>
+		<!-- PrivateAssets: SourceLink is a build-time concern and must never become
          a nuspec dependency of the published packages. -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
-  </ItemGroup>
-
+		<PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+	</ItemGroup>
 </Project>

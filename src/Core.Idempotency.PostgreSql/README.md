@@ -3,10 +3,14 @@
 
 It is recommended for applications that require transactional consistency and long-lived storage.
 
+The package targets .NET 8, .NET 9 and .NET 10, and ships an assembly for each
+of those frameworks.
+
+
 ![NuGet](https://img.shields.io/nuget/v/CoreSystem.Idempotency.PostgreSql?style=for-the-badge)
 ![Downloads](https://img.shields.io/nuget/dt/CoreSystem.Idempotency.PostgreSql?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
-![.NET](https://img.shields.io/badge/.NET-8.0-blue?style=for-the-badge)
+![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%209.0%20%7C%2010.0-blue?style=for-the-badge)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16+-336791?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Dapper](https://img.shields.io/badge/Dapper-ORM-orange?style=for-the-badge)
 
