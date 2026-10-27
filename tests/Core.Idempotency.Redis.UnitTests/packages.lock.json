@@ -440,7 +440,7 @@
       "CoreSystem.Idempotency.Redis": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.0.2, )",
+          "CoreSystem.Idempotency": "[2.1.0, )",
           "CoreSystem.Redis": "[1.1.0, )"
         }
       },
@@ -964,7 +964,7 @@
       "CoreSystem.Idempotency.Redis": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.0.2, )",
+          "CoreSystem.Idempotency": "[2.1.0, )",
           "CoreSystem.Redis": "[1.1.0, )"
         }
       },
@@ -1477,7 +1477,7 @@
       "CoreSystem.Idempotency.Redis": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.0.2, )",
+          "CoreSystem.Idempotency": "[2.1.0, )",
           "CoreSystem.Redis": "[1.1.0, )"
         }
       },
