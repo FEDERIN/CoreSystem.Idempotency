@@ -12,9 +12,6 @@
 		<OutputType>Library</OutputType>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 		
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		
 		<!-- Documentation and packaging -->
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>

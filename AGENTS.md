@@ -2,195 +2,69 @@
 
 Instructions for AI agents (and humans) working in this repository.
 
-## Memory
+## 1. Engineering Standards
 
-- At the start, read `MEMORY.md` to learn the current state of the project and past decisions.
-- When a task is finished, update it: current state, important decisions (with their rationale), and mistakes to avoid.
-- Keep it short (max ~50 lines): summarize or drop what no longer adds value.
-- If something becomes a permanent rule, propose moving it to `AGENTS.md` instead of keeping it in memory.
-- Never store sensitive data (keys, tokens, personal data).
+Before performing any task, read `CORE-SYSTEM-STANDARDS.md`.
 
-## Project
+These standards are mandatory and apply to all development
+activities in this repository.
 
-**CoreSystem.Idempotency** — a production-ready idempotency framework for ASP.NET Core (.NET 8).
-It suppresses concurrent duplicate requests, fingerprints requests, persists successful
-responses through pluggable storage providers, and replays them on retry.
+The repository-specific instructions in this file complement
+the common standards.
 
-Repository: `FEDERIN/CoreSystem.Idempotency` · License: MIT · Docs: https://federin.github.io/CoreSystem.Idempotency/
+If a project-specific rule differs from a common standard,
+follow the explicit project-specific exception.
 
-## Environment
+## 2. Project
+
+**CoreSystem.Idempotency** — a production-ready idempotency framework
+for ASP.NET Core. It suppresses concurrent duplicate requests, fingerprints
+requests, persists successful responses through pluggable storage providers,
+and replays them on retry.
+
+Repository: `FEDERIN/CoreSystem.Idempotency` · License: MIT ·
+Docs: https://federin.github.io/CoreSystem.Idempotency/
+
+## 3. Environment and build
 
 | Item | Value |
 |------|-------|
-| .NET SDK | Pinned to **8.0.402** via `global.json` (do not change unless the repo is upgraded deliberately) |
-| Target framework | `net8.0` for every project |
+| .NET SDK | **10.0.201** via `global.json`, `rollForward: latestFeature` |
+| Target frameworks | `net8.0;net9.0;net10.0`, declared **only** in the root `Directory.Build.props` |
+| Test runner | Microsoft.Testing.Platform (`global.json` `"test"` section) |
 | Solution | `CoreSystem.Idempotency.sln` |
-| Nullable | `enable` everywhere |
-| Implicit usings | `enable` |
-| Packaging | Central Package Management via `Directory.Packages.props` with transitive pinning |
-| Lock files | `packages.lock.json` committed per project; CI restores with `--locked-mode` |
+| Dependencies | Central Package Management, `CentralPackageTransitivePinningEnabled=true` |
+| Lock files | `packages.lock.json` committed per project; restore runs in locked mode |
 
-`src/Directory.Build.props` holds shared NuGet metadata for the shipped packages:
-`GenerateDocumentationFile`, SourceLink and deterministic builds. There is **no** root
-`Directory.Build.props` and **no** `.editorconfig`, so do not assume `TreatWarningsAsErrors`,
-`AnalysisLevel`, or `dotnet format` rules — they are not configured.
+MSBuild only takes the **nearest** `Directory.Build.props`, so the root one is
+imported explicitly by `src/Directory.Build.props` and `tests/Directory.Build.props`.
+Do not move these declarations back into csprojs or re-declare inherited
+properties (`Nullable`, `ImplicitUsings`) in any props or csproj.
 
-## Repository layout
+Folder-level props own the deltas:
 
-```text
-src/
-  Core.Idempotency/                     -> package CoreSystem.Idempotency           (core, no storage deps)
-  Core.Idempotency.Redis/               -> package CoreSystem.Idempotency.Redis
-  Core.Idempotency.PostgreSql/          -> package CoreSystem.Idempotency.PostgreSql
-tests/
-  Core.Idempotency.UnitTests/           -> core unit tests
-  Core.Idempotency.Redis.UnitTests/     -> Redis provider unit tests (DI)
-  Core.Idempotency.PostgreSql.UnitTests/-> PostgreSQL provider unit tests (DI)
-  Core.Idempotency.Redis.IntegrationTests/          -> Testcontainers-based
-  Core.Idempotency.PostgreSql.IntegrationTests/     -> Testcontainers-based
-docs/                                   -> MkDocs Material site
-mkdocs.yml, requirements.txt, serve-docs.bat
-generate-lock-files.bat, publish-package.bat
-```
+- `src/`: package metadata, XML docs, SourceLink, `GeneratePackageOnBuild=true`.
+- `tests/`: `IsPackable=false`, `GenerateDocumentationFile=false`,
+  `NoWarn` for CA1707/CA1001 and (net10.0 only) ASPDEPR004/ASPDEPR008.
 
-### Naming rules (important, they are inconsistent-looking but intentional)
+`Directory.Build.local.props` (untracked) may set `UseLocalProjectReferences=true`
+to point providers at local core projects instead of the published package;
+in that mode restore must stay unlocked. The root props handles this.
 
-- **Assembly / folder / project**: `Core.Idempotency*`
-- **Namespace**: `Core.Idempotency.*` (e.g. `Core.Idempotency.Middleware`)
-- **NuGet PackageId**: `CoreSystem.Idempotency*`
-- **Public API prefix**: `Core` — `AddCoreIdempotency()`, `UseCoreIdempotency()`,
-  `AddCoreIdempotencyRedis(Action<RedisOptions>)`,
-  `AddCoreIdempotencyPostgreSql(Action<PostgreSqlOptions>)`
-
-Both provider extensions **require** a configuration delegate; there is no parameterless
-overload. `RedisOptions.Configuration` is an `Action<ConfigurationOptions>` and
-`PostgreSqlOptions.ConnectionString` is a `string`, so neither can be populated with
-`Bind` — assign them explicitly.
-
-Do not "fix" the mismatch between namespace root (`Core.`) and package id (`CoreSystem.`).
-Consumers depend on the package id; the namespace root is part of the published API surface.
-
-## Architecture rules
-
-1. **The core package is storage-agnostic.** `Core.Idempotency` must never reference
-   `StackExchange.Redis`, `Npgsql`, `Dapper`, or any provider package. If core code needs
-   storage, extend `IIdempotencyStorage` instead.
-2. **Dependency direction is one-way.** Providers → core. Core never references a provider.
-   Both providers reference `Core.Idempotency` through a `PackageReference` on the version
-   pinned in `Directory.Packages.props`, which must already be on nuget.org. That dependency
-   becomes a concrete nuspec dependency and lets each provider ship on its own tag.
-3. **Publish order is base-first**: `Core.Idempotency` → `Core.Idempotency.Redis` /
-   `Core.Idempotency.PostgreSql`. Publishing a provider before its core puts a package on the
-   feed whose dependency does not exist yet.
-4. **Extensibility points** are `IIdempotencyStorage`, `IIdempotencyKeyResolver`,
-   `IRequestFingerprintProvider`, `IRequestFingerprintBuilder`, `IRequestHasher`.
-   Adding a provider means implementing these and shipping a new package — not editing core.
-5. **Storage lifecycle is lease-based.** `IIdempotencyStorage` exposes
-   `TryAcquireAsync` / `CompleteAsync` / `ReleaseAsync` / `GetAsync` / `SetAsync`.
-   Any change to these semantics is a **breaking change** for every provider and must be
-   reflected in all providers, tests, docs, and `CHANGELOG.md`.
-
-## Code conventions
-
-Follow the existing style exactly; consistency matters more than personal preference.
-
-- **File-scoped namespaces**, 4-space indent, `var` unless a type is ambiguous.
-- **Primary constructors** for implementation classes
-  (`internal sealed class IdempotencyService(ILogger<...> logger) : IIdempotencyService`).
-  Regular constructors are fine for options/DTOs.
-- **Visibility is minimal.** Types are `internal` by default
-  (`IdempotencyMiddleware`, `IdempotencyService`, `HeaderIdempotencyKeyResolver`,
-  fingerprint internals, both storage implementations, all `*Messages` classes).
-  Promote to `public` only what is a deliberate extension or consumer-facing contract
-  (`IIdempotencyStorage`, `IIdempotencyKeyResolver`, `IdempotencyOptions`,
-  `FingerprintOptions`, `RedisOptions`, `PostgreSqlOptions`, `IdempotencyEntry`,
-  `IdempotencyResponse`, `IdempotencyAcquireResult`, `RequestFingerprint`,
-  `IdempotencyMetrics`, `IdempotencyFingerprintMismatchException`, the DI extension classes).
-- **`InternalsVisibleTo`** is granted to the matching test projects and to
-  `DynamicProxyGenAssembly2` (Moq). When a new test project is added, add it to the
-  corresponding csproj.
-- **XML doc comments** on every public type and member, including `<param>` and `<returns>`.
-  Existing options classes are fully documented — keep new ones at that level.
-- **Exception and message text is centralized** in `internal static class` message holders
-  (`IdempotencyMessages`, `RedisMessages`, `PostgreSqlMessages`). Never inline user-facing
-  strings in logic; add them to the corresponding `*Messages` class.
-- **Null checks** use `ArgumentNullException.ThrowIfNull(...)`.
-- **Configuration** goes in `Options/` classes with safe defaults, a `CopyFrom` method when the
-  type is composed (`IdempotencyOptions.CopyFrom`, `FingerprintOptions.CopyFrom`), and
-  convenience mutators (`AddAllowedMethods`, `RemoveCacheableStatusCodes`, ...).
-  `IdempotencyOptions.Enabled` and provider registration are the master switches: when
-  `Enabled` is `false`, `AddCoreIdempotency` returns early and `UseCoreIdempotency` returns
-  the app builder untouched. Preserve that no-op behavior.
-- **Observability** is built in: any new operation should emit through `IdempotencyMetrics` /
-  `IdempotencyDiagnosticsConstants` / the OpenTelemetry contributor, not ad-hoc logs.
-- New provider packages must mirror the folder layout of an existing provider:
-  `DependencyInjection/`, `Options/`, `Storage/` (plus `Builders/` for Redis key composition).
-
-### PostgreSQL schema
-
-The DDL exists in **two places that must stay in sync**:
-
-- `src/Core.Idempotency.PostgreSql/scripts/postgres.sql` (shipped to consumers)
-- `tests/Core.Idempotency.PostgreSql.IntegrationTests/Scripts/postgresql.sql`
-  (`CopyToOutputDirectory=PreserveNewest`)
-
-Any column or index change must be applied to both files and covered by an integration test.
-
-## Testing
-
-- Stack: **xunit.v3** (`Fact`/`Theory`), **FluentAssertions**, **Moq**,
-  `Microsoft.AspNetCore.TestHost`, **Testcontainers** (Redis, PostgreSql), coverlet.
-- Naming: `Method_Should_Do_Expected_When_Condition`, with `// Arrange`, `// Act`,
-  `// Assert` comments.
-- Test namespaces mirror the source namespace plus the project scope, e.g.
-  `Core.Idempotency.UnitTests.DependencyInjection`.
-- Unit tests target DI registration and option behavior; **behavior against real stores lives
-  in the integration test projects**, which spin up Testcontainers containers. Do not fake a
-  Redis/PostgreSQL client in unit tests — extend the integration suites instead.
-- Shared provider behavior is expressed in a `IdempotencyTestsBase` per integration project.
-  When you add a storage contract case, add it to the shared base so both providers run it.
-
-### Commands
+Commands:
 
 ```bash
 dotnet build CoreSystem.Idempotency.sln -c Release
-dotnet test  CoreSystem.Idempotency.sln -c Release
+dotnet test --solution CoreSystem.Idempotency.sln -c Release
 
-# individual suites
-dotnet test tests/Core.Idempotency.UnitTests/Core.Idempotency.UnitTests.csproj
-dotnet test tests/Core.Idempotency.Redis.UnitTests/Core.Idempotency.Redis.UnitTests.csproj
-dotnet test tests/Core.Idempotency.PostgreSql.UnitTests/Core.Idempotency.PostgreSql.UnitTests.csproj
-dotnet test tests/Core.Idempotency.Redis.IntegrationTests/Core.Idempotency.Redis.IntegrationTests.csproj
-dotnet test tests/Core.Idempotency.PostgreSql.IntegrationTests/Core.Idempotency.PostgreSql.IntegrationTests.csproj
+# the MTP runner needs --project, not a bare path
+dotnet test --project tests/Core.Idempotency.UnitTests/Core.Idempotency.UnitTests.csproj -c Release
 ```
 
-Integration tests require a working Docker daemon.
+Integration suites require a running Docker daemon
+(`DockerUnavailableException` otherwise).
 
-**Never gate anything on `dotnet list package --vulnerable`.** Measured on this
-repository, it exits 0 even when it reports a High advisory, in both text and JSON,
-so it can never fail a build and its output can only mislead. The real gate is the
-restore: `NuGetAudit` with `NuGetAuditMode=all` plus `TreatWarningsAsErrors` turns
-NU1902/NU1903 into a restore failure. Do not add the report back "just to show it".
-
-**A green CI run does not mean the package is correct.** `publish.yml` verifies the
-restore, the build, the tests, that `pack` produced exactly one file with the
-expected name, and that the version is not already published. It never opens the
-`.nupkg`. README, LICENSE, the `<readme>` declaration and the existence of pinned
-dependencies are checked only by `publish-package.bat`, which is gitignored and
-therefore local-only. It is nonetheless the sole gate against the class of defect
-2.0.0 shipped, so treat it as production code.
-
-## CI/CD
-
-| Workflow | Trigger | What it does |
-|---|---|---|
-| `.github/workflows/ci.yml` | push/PR to `main` | restore `--locked-mode`, Release build, unit tests, vulnerability audit, then integration tests (Docker) |
-| `.github/workflows/codeql.yml` | push/PR to `main`, weekly | CodeQL for `actions` and `csharp` |
-| `.github/workflows/documentation.yml` | changes under `docs/**` or `mkdocs.yml`, manual | MkDocs build → GitHub Pages |
-| `.github/workflows/publish.yml` | tag `*/v*` | pack + push to nuget.org and GitHub Packages |
-| `.github/dependabot.yml` | scheduled | NuGet + GitHub Actions updates |
-
-Because restore is `--locked-mode`, **any package change requires regenerating the lock files**
+Locked restore: any package change requires regenerating the lock files
 and committing them:
 
 ```bash
@@ -200,77 +74,217 @@ git add -- '**/packages.lock.json'
 
 Never edit `packages.lock.json` by hand.
 
-## Releasing a package
+## 4. Repository layout and naming
 
-1. Update `<Version>`, `<AssemblyVersion>`, `<FileVersion>` and `<InformationalVersion>` in the
-   package csproj. All four must agree — the nuspec metadata is generated from them.
-2. Bump the `CoreSystem.Idempotency` `PackageVersion` in `Directory.Packages.props` **only after
-   the new core version is live on nuget.org**, and regenerate the lock files. The providers pin
-   the published core package, so a version that does not exist yet fails `--locked-mode` restore
-   in CI and at pack time. Add entries for any other external package a project genuinely
-   references; never add an entry for a provider, which is only ever referenced by tests.
-3. Update `src/Core.Idempotency/CHANGELOG.md` (Keep a Changelog + SemVer). Include a
-   `Migration` section with numbered steps for breaking changes.
-4. Merge to `main`, then create and push the tag:
-   `git tag -a Core.Idempotency/v2.1.0 -m "CoreSystem.Idempotency 2.1.0"` and push it.
-   The tag **is** the release; `publish.yml` re-reads the version from it.
-   `RELEASING.md` holds the full command reference.
-5. Watch it: `gh run watch`.
+```text
+src/
+  Core.Idempotency/                     -> package CoreSystem.Idempotency  (core, no storage deps)
+  Core.Idempotency.Redis/               -> package CoreSystem.Idempotency.Redis
+  Core.Idempotency.PostgreSql/          -> package CoreSystem.Idempotency.PostgreSql
+tests/
+  Core.Idempotency.UnitTests/           -> core unit tests
+  Core.Idempotency.Redis.UnitTests/
+  Core.Idempotency.PostgreSql.UnitTests/
+  Core.Idempotency.Redis.IntegrationTests/          -> Testcontainers-based
+  Core.Idempotency.PostgreSql.IntegrationTests/     -> Testcontainers-based
+docs/                                   -> MkDocs Material site
+generate-lock-files.bat, publish-package.bat, serve-docs.bat  (all tracked)
+RELEASING.md                            -> release command reference
+```
 
-Rules and caveats:
+Naming rules (they look inconsistent but are intentional; do not "fix" them):
 
-- Tag format is `<project-folder>/v<version>`, e.g. `Core.Idempotency.Redis/v2.1.0`.
-- **Published versions are immutable.** A re-run of an already-published version fails with 409;
-  `--skip-duplicate` in `publish.yml` does not cover nuget.org's own rejection in all paths.
-  Check `https://api.nuget.org/v3-flatcontainer/<package-id>/index.json` before tagging.
-- Release is not resumable. A failure on the last tag leaves earlier packages live; recovery is
-  manual, so publish the core package first.
-- `publish.yml` resolves the project from `src/<project>/<project>.csproj` and needs a `case`
-  entry mapping that project to its test projects. **A new package requires a new `case` entry
-  there**, otherwise the publish job fails with "No test-project mapping exists".
-- `publish-package.bat` and `generate-lock-files.bat` are local helpers (gitignored). Both are
-  adapted to `CoreSystem.Idempotency`; edit the `case` block when adding a new provider.
-- Note that both `.bat` files are ignored by `.gitignore` (`*.bat`), so they are local
-  helpers and never reach other clones.
+- **Assembly / folder / project**: `Core.Idempotency*`
+- **Namespace**: `Core.Idempotency.*`
+- **NuGet PackageId**: `CoreSystem.Idempotency*`
+- **Public API prefix**: `Core` — `AddCoreIdempotency()`, `UseCoreIdempotency()`,
+  `AddCoreIdempotencyRedis(Action<RedisOptions>)`,
+  `AddCoreIdempotencyPostgreSql(Action<PostgreSqlOptions>)`.
 
-## Documentation
+Both provider extensions **require** a configuration delegate; there is no
+parameterless overload. `RedisOptions.Configuration` is an
+`Action<ConfigurationOptions>` and `PostgreSqlOptions.ConnectionString` is a
+`string`, so neither can be populated with `Bind` — assign them explicitly.
+Consumers depend on the package id; the namespace root is published API
+surface since 1.x.
 
-- Site source lives in `docs/`; navigation is declared in `mkdocs.yml` under `nav`.
+## 5. Architecture
+
+- **The core package is storage-agnostic**: `Core.Idempotency` must never
+  reference `StackExchange.Redis`, `Npgsql`, `Dapper` or a provider package.
+  If core code needs storage, extend `IIdempotencyStorage`.
+- **Dependency direction is one-way**: providers → core. Both providers
+  consume the core as a **published `PackageReference`** pinned in
+  `Directory.Packages.props` — never a `ProjectReference` in the shipped
+  configuration (a local override exists for development; see §3).
+- **Publish order is base-first**: core → Redis / PostgreSql.
+- **Extensibility points**: `IIdempotencyStorage`, `IIdempotencyKeyResolver`,
+  `IRequestFingerprintProvider`, `IRequestFingerprintBuilder`, `IRequestHasher`.
+  Adding a provider means implementing these and shipping a new package.
+- **Storage lifecycle is lease-based** (`TryAcquire` / `Complete` / `Release`
+  / `Get` / `Set`). Changing these semantics is a **breaking change** for
+  every provider and must be reflected in all providers, tests, docs and
+  `CHANGELOG.md`.
+
+## 6. Dependencies
+
+- Versions live only in `Directory.Packages.props`; never use an inline
+  `Version` on a `PackageReference`.
+- Transitive pins are real constraints, not idle entries. A pin may exist
+  with **no direct consumer** because it raises a transitive floor
+  (`StackExchange.Redis` ≥ 2.13.17 for `CoreSystem.Redis` — pin it or
+  NU1109 blocks restore). Scan the props files too before declaring a pin
+  inert, and when an upstream package raises a floor, move the pin in the
+  **same commit**.
+- The core pin (`CoreSystem.Idempotency`) must move in **its own PR, after
+  the new core version is live on nuget.org** — otherwise `--locked-mode`
+  restore asks the feed for a version that does not exist and CI deadlocks.
+- Keep `<Version>`, `<AssemblyVersion>`, `<FileVersion>` and
+  `<InformationalVersion>` in the package csprojs synchronized.
+
+## 7. Code conventions
+
+- **File-scoped namespaces**, 4-space indent, `var` unless ambiguous.
+- **Primary constructors** for implementation classes; plain constructors
+  for options/DTOs.
+- **Minimal visibility**: `internal` by default. Promote to `public` only
+  deliberate contracts (the five extensibility points, `IdempotencyOptions`,
+  `FingerprintOptions`, both `*Options`, entries/results/fingerprint types,
+  `IdempotencyMetrics`, `IdempotencyFingerprintMismatchException`, DI extensions).
+- **`InternalsVisibleTo`** to the matching test projects and
+  `DynamicProxyGenAssembly2`; add it to the csproj whenever a test project is new.
+- **XML docs** on every public type and member, with `<param>`/`<returns>`.
+- **Exception text centralized** in `IdempotencyMessages`, `RedisMessages`,
+  `PostgreSqlMessages`. Never inline user-facing strings.
+- **Null checks** via `ArgumentNullException.ThrowIfNull`.
+- **Configuration** in `Options/` classes with safe defaults, `CopyFrom`
+  when composed, convenience mutators. `IdempotencyOptions.Enabled=false`
+  makes registration a **no-op** (`AddCoreIdempotency` returns early,
+  `UseCoreIdempotency` returns the app untouched) — preserve that.
+- **Observability** through `IdempotencyMetrics` and the existing
+  diagnostics infrastructure, never ad-hoc logs.
+- New providers mirror an existing provider's layout:
+  `DependencyInjection/`, `Options/`, `Storage/`.
+
+## 8. Testing
+
+- Stack: **xunit.v3**, **FluentAssertions**, **Moq**, TestHost,
+  **Testcontainers** (Redis, PostgreSql), coverlet.
+- Naming `Method_Should_Do_Expected_When_Condition`; `// Arrange`, `// Act`,
+  `// Assert` comments; test namespaces mirror the source namespaces.
+- Unit tests cover DI registration and option behavior. **Real store
+  behavior lives in the integration suites** — do not fake a Redis or
+  PostgreSQL client in unit tests.
+- Shared provider behavior is expressed in an `IdempotencyTestsBase` per
+  integration project; when a storage contract case is added, add it to
+  the shared base so **both** providers run it.
+
+## 9. PostgreSQL schema
+
+The DDL exists in **two synchronized files**:
+
+- `src/Core.Idempotency.PostgreSql/scripts/postgres.sql` (shipped to consumers)
+- `tests/Core.Idempotency.PostgreSql.IntegrationTests/Scripts/postgresql.sql`
+
+Any column or index change is applied to both and covered by an
+integration test.
+
+## 10. CI/CD
+
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `ci.yml` | push/PR to `main` | restore `--locked-mode`, Release build, `dotnet format --verify-no-changes`, unit tests, integration tests (Docker) |
+| `codeql.yml` | push/PR to `main`, weekly | CodeQL for `actions` and `csharp` |
+| `documentation.yml` | `docs/**` or `mkdocs.yml` changes, manual | MkDocs build → GitHub Pages |
+| `publish.yml` | tag `*/v*` | pack + push to nuget.org and GitHub Packages |
+| `dependabot.yml` | scheduled | NuGet + Actions updates |
+
+There is **no `dotnet list package --vulnerable` step**: the vulnerable-package
+gate is the restore itself (`NuGetAudit` + `NuGetAuditMode=all` +
+`TreatWarningsAsErrors`), because `dotnet list package --vulnerable` exits 0
+even when it reports High advisories.
+
+**A green CI run does not mean the package is correct.** `publish.yml`
+verifies restore, build, tests, that pack produced exactly one nupkg with
+the expected name, and that the version is not already published. It never
+opens the `.nupkg`: README, LICENSE, `<readme>` and nuspec dependency
+checks happen only in `publish-package.bat` (tracked, see §11).
+
+CI installs SDKs 8.0.x, 9.0.x and 10.0.x: building and running the
+net8.0/net9.0 assets needs their apphost packs and runtimes.
+
+## 11. Release
+
+`RELEASING.md` holds the full command reference; rules here.
+
+1. Update the four version properties in the package csproj (all must agree).
+2. Bump the core pin in `Directory.Packages.props` **only after the core
+   version is live on nuget.org**, then regenerate lock files (§3, §6).
+3. Update `src/Core.Idempotency/CHANGELOG.md` (Keep a Changelog + SemVer;
+   `Migration` section with numbered steps for breaking changes).
+4. Merge to `main`, then tag: `git tag -a <folder>/v<version>` and push
+   only that tag. The tag **is** the release; `publish.yml` re-reads the
+   version from it. Watch with `gh run watch`.
+5. New packages require a new `case` entry in `publish.yml`'s
+   test-project mapping and in `publish-package.bat`, otherwise the
+   publish job fails with "No test-project mapping exists".
+
+Rules:
+
+- Tag format: `<project folder>/v<version>`, e.g. `Core.Idempotency.Redis/v2.1.0`.
+- **Published versions are immutable.** A duplicate push fails with 409 and
+  `publish.yml` deliberately does **not** use `--skip-duplicate`. Check the
+  flat-container endpoint (`https://api.nuget.org/v3-flatcontainer/<id>/index.json`)
+  before tagging.
+- Release is not resumable; publish core first.
+- `generate-lock-files.bat`, `publish-package.bat` and `serve-docs.bat`
+  are **tracked local helpers** (the `*.bat` ignore rule has explicit
+  negations for them). `publish-package.bat` runs every pre-flight gate
+  including `.nupkg` verification; treat it as production code.
+
+## 12. Documentation
+
+- Site source in `docs/`, navigation in `mkdocs.yml` under `nav`.
   **Adding a page without a `nav` entry means it is not published.**
-- Local preview: `serve-docs.bat` (creates `.venv` with Python 3.11, installs `requirements.txt`,
-  serves http://127.0.0.1:8000/). `.venv` is gitignored.
-- Stack: MkDocs Material + `mkdocs-mermaid2-plugin`. Use ```mermaid fences for diagrams and
-  ```text fences for ASCII diagrams.
-- `docs/Configuration.md` and `docs/Providers/*.md` must stay in sync with the `Options` classes
-  and the `Add*` extension signatures.
-- Each package ships its own `README.md` (`PackageReadmeFile`). Update the README of every
-  package whose public API or setup steps you change — these are rendered on nuget.org.
-- Docs and READMEs use emoji section headings (`# ✨ Features`, `# 📦 ...`), `---` separators,
-  and the shields.io badge block at the top. Match that style.
+- Local preview: `serve-docs.bat` (`.venv` with Python, gitignored), http://127.0.0.1:8000/.
+- Stack: MkDocs Material + `mkdocs-mermaid2-plugin`; ```mermaid for
+  diagrams, ```text for ASCII.
+- `docs/Configuration.md` and `docs/Providers/*.md` must stay in sync
+  with the `Options` classes and the `Add*` extension signatures.
+- Each package ships its own `README.md` (`PackageReadmeFile`), rendered
+  on nuget.org — update it whenever its public API or setup steps change.
+- Use the established style: emoji section headings (`# ✨ Features`,
+  `# 📦 ...`), `---` separators, shields.io badge block at the top.
 
-## Git workflow
+## 13. Git workflow
 
-- `main` is the release branch. **Work on a feature branch and open a PR**; never commit
-  directly to `main`.
-- One logical change per branch/PR.
-- Commit messages: conventional prefix (`feat:`, `fix:`, `docs:`, `chore:`, `refactor:`,
-  `test:`), short imperative summary. Keep the subject under ~72 characters.
-- **Write everything the repository publishes in English, always.** That means commit
-  messages, PR titles, PR descriptions, code comments, XML docs, README files, the docs
-  site, and release notes. Never mix another language into them.
-- **Talk to the repository owner in Spanish.** Chat replies and explanations may be in
-  Spanish; repository artefacts may not. When quoting Spanish conversation into a PR or
-  commit, translate rather than paste.
-- Never commit `bin/`, `obj/`, `.venv/`, `*.nupkg`, coverage output, or `.env`. See `.gitignore`.
-- Never hand-edit workflow YAML indentation — CI failures on a two-space slip are costly.
+- `main` is protected. **Feature branch + PR**, one logical change per PR,
+  never commit directly to `main` — including small fixes.
+- Conventional prefix (`feat:`, `fix:`, `docs:`, `chore:`, ...), imperative
+  subject under ~72 characters.
+- **Repository artifacts are written in English, always**: commits, PRs,
+  code comments, XML docs, READMEs, docs, release notes. Chat replies with
+  the owner may be in Spanish; translate quotes into artifacts.
+- Never commit `bin/`, `obj/`, `.venv/`, `*.nupkg`, coverage output, `.env`.
+- Never hand-edit workflow YAML indentation beyond copy-paste level care —
+  CI failures on a two-space slip are costly.
 
-## Definition of done
+## 14. Memory
 
-Before proposing a change as complete:
+Read `MEMORY.md` at the beginning of a task.
+Update it when significant decisions or project state change.
+Keep it concise (max ~50 lines: summarize or drop what no longer
+adds value).
+If something becomes a permanent rule, propose moving it to
+`AGENTS.md` instead of keeping it in memory.
+Never store sensitive data (keys, tokens, personal data).
 
-1. `dotnet build CoreSystem.Idempotency.sln -c Release` succeeds with no new warnings.
-2. All affected test projects pass, including the integration suites when storage behavior changed.
-3. Lock files are regenerated and committed if any package reference changed.
-4. Public API changes are reflected in the relevant `README.md`, `docs/`, and `CHANGELOG.md`.
-5. PostgreSQL schema files are updated in both locations if the schema changed.
-6. New public members have XML documentation.
+## 15. Definition of done
+
+1. `dotnet build CoreSystem.Idempotency.sln -c Release` succeeds with zero warnings.
+2. Affected tests pass, integration suites when storage behavior changed.
+3. `dotnet format CoreSystem.Idempotency.sln --verify-no-changes` is clean.
+4. Lock files regenerated and committed if any package changed.
+5. Public API changes reflected in package `README.md`, `docs/`, `CHANGELOG.md`.
+6. PostgreSQL schema updated in both files if changed.
+7. New public members have XML documentation.
