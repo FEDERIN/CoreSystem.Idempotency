@@ -13,7 +13,7 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -38,3 +38,7 @@ jobs:
 
       - name: Test solution
         run: dotnet test --solution CoreSystem.Idempotency.sln --configuration Release --no-build
+
+      - name: Audit vulnerable packages
+        continue-on-error: true
+        run: dotnet list CoreSystem.Idempotency.sln package --vulnerable --include-transitive

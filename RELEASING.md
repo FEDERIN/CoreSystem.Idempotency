@@ -69,9 +69,8 @@ whether the push succeeded.
 
 ## With the local script
 
-`publish-package.bat` and `generate-lock-files.bat` are tracked local helpers
-(the `*.bat` rule in `.gitignore` has explicit negations for them, plus
-`serve-docs.bat`). The script runs every pre-flight check above, plus build,
+`publish-package.bat` and `generate-lock-files.bat` are gitignored, so they exist
+only in this clone. The script runs every pre-flight check above, plus build,
 tests, and `.nupkg` verification, and refuses to tag if any of them fail:
 
 ```bat

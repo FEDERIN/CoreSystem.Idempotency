@@ -20,12 +20,6 @@ standards unless an explicit project-specific exception exists.
 
 All projects must use the shared SDK configuration.
 
-MSBuild only auto-imports the *nearest* `Directory.Build.props` walking
-up from a project. Every folder that contains projects must therefore have
-a `Directory.Build.props` that imports the root one and layers its own
-settings on top. Never duplicate a property in a csproj or folder props
-when it is already declared by a parent props file.
-
 ## 3. Dependency Management
 
 - Use Central Package Management.
@@ -73,10 +67,10 @@ when it is already declared by a parent props file.
 ## 7. Security and Dependencies
 
 - Enable NuGet vulnerability auditing.
-- The security gate is the **restore**: `NuGetAudit` with `NuGetAuditMode=all`
-  plus `TreatWarningsAsErrors` turns NU1902/NU1903 into a restore failure.
-- Never add `dotnet list package --vulnerable` as a CI gate: it exits 0 even
-  when it reports a High advisory, in both text and JSON output.
+- Run the CI audit step (NuGet vulnerability audit of the
+  solution including transitive dependencies) on every PR.
+- Do not rely on `dotnet list package --vulnerable` as the only
+  security gate.
 - Never commit secrets, credentials or environment files.
 
 ## 8. Documentation
