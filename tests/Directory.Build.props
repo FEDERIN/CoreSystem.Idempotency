@@ -8,9 +8,6 @@
     requirement and can relax the analyzer rules that do not fit xUnit.
   -->
   <PropertyGroup>
-	<ImplicitUsings>enable</ImplicitUsings>
-	<Nullable>enable</Nullable>
-
 	<IsPackable>false</IsPackable>
 	<IsTestProject>true</IsTestProject>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>

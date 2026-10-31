@@ -20,9 +20,6 @@
 
 		<PackageProjectUrl>https://federin.github.io/CoreSystem.Idempotency/Providers/PostgreSQL/</PackageProjectUrl>
 
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-
 		<PackageTags>
 			PostgreSQL;
 			Dapper;
