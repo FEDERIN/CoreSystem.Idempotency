@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+		<PackageId>CoreSystem.Idempotency.OpenApi</PackageId>
+		<Version>1.0.0</Version>
+		<AssemblyVersion>1.0.0.0</AssemblyVersion>
+		<FileVersion>1.0.0.0</FileVersion>
+		<InformationalVersion>1.0.0</InformationalVersion>
+		<Authors>Federin Pastor Gutierrez Ortiz</Authors>
+		<Description>OpenAPI/Swagger integration for CoreSystem.Idempotency: documents the Idempotency-Key header on idempotent operations.</Description>
+		<PackageTags>Idempotency;OpenAPI;Swagger;Swashbuckle;ASP.NET Core;.NET8</PackageTags>
+		<RepositoryUrl>https://github.com/FEDERIN/CoreSystem.Idempotency</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageProjectUrl>https://federin.github.io/CoreSystem.Idempotency/OpenApi</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CoreSystem.Idempotency" />
+		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+	</ItemGroup>
+
+
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="Core.Idempotency.OpenApi.UnitTests" />
+	</ItemGroup>
+
+</Project>
