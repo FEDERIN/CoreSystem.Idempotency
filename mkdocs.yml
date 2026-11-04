@@ -46,6 +46,7 @@ nav:
       - Providers:
           - Redis: Providers/Redis.md
           - PostgreSQL: Providers/PostgreSQL.md
+      - OpenAPI: OpenApi.md
       - Observability: Observability.md
       - Errors:
           - Fingerprint Mismatch: Errors/idempotency-fingerprint-mismatch.md

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using FluentAssertions;
+using Core.Idempotency.Constants;
 
 namespace Core.Idempotency.Redis.IntegrationTests.Storage;
 
@@ -35,7 +36,7 @@ public sealed class RedisIdempotencyTests
     private Task<HttpResponseMessage> SendConcurrentRequestAsync(string key)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, "/orders/concurrent");
-        request.Headers.Add("Idempotency-Key", key);
+        request.Headers.Add(HeaderNames.IdempotencyKey, key);
         return Client.SendAsync(request, TestContext.Current.CancellationToken);
     }
 

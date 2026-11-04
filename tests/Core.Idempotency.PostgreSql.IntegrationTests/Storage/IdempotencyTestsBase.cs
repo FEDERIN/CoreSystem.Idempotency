@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using Core.Idempotency.Constants;
+using FluentAssertions;
 
 namespace Core.Idempotency.PostgreSql.IntegrationTests.Storage;
 
@@ -6,19 +7,21 @@ public abstract class IdempotencyTestsBase
 {
     protected abstract HttpClient Client { get; }
 
+
     [Fact]
     public async Task Should_ReturnCachedResponse_When_RequestIsRepeated()
     {
+        await ResponseOrders();
+        var response2 = await ResponseOrders();
+
+        response2.Headers.Should().Contain(h => h.Key == HeaderNames.IdempotencyCache);
+    }
+
+    private async Task<HttpResponseMessage> ResponseOrders()
+    {
         var request = new HttpRequestMessage(HttpMethod.Post, "/orders");
-        request.Headers.Add("Idempotency-Key", "123");
+        request.Headers.Add(HeaderNames.IdempotencyKey, "123");
 
-        var response1 = await Client.SendAsync(request, TestContext.Current.CancellationToken);
-
-        request = new HttpRequestMessage(HttpMethod.Post, "/orders");
-        request.Headers.Add("Idempotency-Key", "123");
-
-        var response2 = await Client.SendAsync(request, TestContext.Current.CancellationToken);
-
-        response2.Headers.Should().Contain(h => h.Key == "X-Idempotency-Cache");
+        return await Client.SendAsync(request, TestContext.Current.CancellationToken); ;
     }
 }

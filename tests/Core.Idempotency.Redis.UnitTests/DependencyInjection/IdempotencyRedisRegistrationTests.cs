@@ -5,6 +5,7 @@ using Core.Idempotency.Redis.DependencyInjection;
 using Core.Idempotency.Redis.Storage;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace Core.Idempotency.Redis.UnitTests.DependencyInjection;
 
@@ -14,13 +15,7 @@ public class IdempotencyRedisRegistrationTests
     public void AddCoreIdempotencyRedis_Should_Register_ProviderServices()
     {
         // Arrange
-        var services = new ServiceCollection();
-
-        services.AddCoreIdempotency(options =>
-        {
-            options.Enabled = true;
-            options.InstanceName = "TestInstance";
-        });
+        var services = CreateServices();
 
         // Act
         services.AddCoreIdempotencyRedis(options =>
@@ -46,9 +41,28 @@ public class IdempotencyRedisRegistrationTests
     [Fact]
     public void AddCoreIdempotencyRedis_Should_Throw_When_Configuration_Is_Null()
     {
-        // Arrange
+        var services = CreateServices();
+
+        CreateServicesExpectingInvalidOperationException(
+            services,
+            null!,
+            RedisMessages.RedisConfigurationRequired);
+    }
+
+    [Fact]
+    public void AddCoreIdempotencyRedis_Should_Require_CoreIdempotency_Registration()
+    {
         var services = new ServiceCollection();
-        // Act
+
+        CreateServicesExpectingInvalidOperationException(
+            services,
+            conf => conf.EndPoints.Add("localhost:6379"),
+            RedisMessages.IdempotencyRegistrationRequired);
+    }
+
+    private static ServiceCollection CreateServices()
+    {
+        var services = new ServiceCollection();
 
         services.AddCoreIdempotency(options =>
         {
@@ -56,36 +70,21 @@ public class IdempotencyRedisRegistrationTests
             options.InstanceName = "TestInstance";
         });
 
-        var action = () => services.AddCoreIdempotencyRedis(options =>
-        {
-            options.Configuration = null;
-        });
-
-        // Assert
-        action.Should()
-              .Throw<InvalidOperationException>()
-              .WithMessage(RedisMessages.RedisConfigurationRequired);
+        return services;
     }
 
-
-    [Fact]
-    public void AddCoreIdempotencyRedis_Should_Require_CoreIdempotency_Registration()
+    private static void CreateServicesExpectingInvalidOperationException(
+        ServiceCollection services,
+        Action<ConfigurationOptions>? configurationOptions,
+        string message)
     {
-        // Arrange
-        var services = new ServiceCollection();
-
-        // Act
         var action = () => services.AddCoreIdempotencyRedis(options =>
         {
-            options.Configuration = conf =>
-            {
-                conf.EndPoints.Add("localhost:6379");
-            };
+            options.Configuration = configurationOptions;
         });
 
-        // Assert
         action.Should()
               .Throw<InvalidOperationException>()
-              .WithMessage(RedisMessages.IdempotencyRegistrationRequired);
+              .WithMessage(message);
     }
 }

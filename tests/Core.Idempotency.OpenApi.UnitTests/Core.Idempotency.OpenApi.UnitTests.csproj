@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\Core.Idempotency.OpenApi\Core.Idempotency.OpenApi.csproj" />
+	</ItemGroup>
+</Project>
