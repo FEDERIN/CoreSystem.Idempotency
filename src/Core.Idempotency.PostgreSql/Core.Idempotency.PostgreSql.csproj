@@ -3,13 +3,12 @@
 	<PropertyGroup>
 		<PackageId>CoreSystem.Idempotency.PostgreSql</PackageId>
 
-		<Version>2.1.1</Version>
-		<AssemblyVersion>2.1.1</AssemblyVersion>
-		<FileVersion>2.1.1.0</FileVersion>
-		<InformationalVersion>2.1.1</InformationalVersion>
+		<Version>2.1.0</Version>
+		<AssemblyVersion>2.1.0</AssemblyVersion>
+		<FileVersion>2.1.0.0</FileVersion>
+		<InformationalVersion>2.1.0</InformationalVersion>
 
 		<PackageReleaseNotes>
-			2.1.1: Patch release. Consumes CoreSystem.Idempotency 2.1.1 which exposes Constants.HeaderNames as public.
 			2.1.0: Multi-targeting release. The package now ships net8.0, net9.0 and net10.0 assets instead of net8.0 only, so a project on .NET 9 or .NET 10 gets an assembly compiled for its own target framework.
 			Dependency refresh. No code or API changes.
 			Dapper 2.1.79 to 2.1.89 and Npgsql 8.0.3 to 8.0.9, plus the refreshed transitive

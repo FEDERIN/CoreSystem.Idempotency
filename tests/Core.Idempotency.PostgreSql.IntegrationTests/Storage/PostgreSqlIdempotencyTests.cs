@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using FluentAssertions;
-using Core.Idempotency.Constants;
-using Core.Idempotency.Testing.Storage;
 
 namespace Core.Idempotency.PostgreSql.IntegrationTests.Storage;
 
@@ -36,7 +34,7 @@ public sealed class PostgreSqlIdempotencyTests(PostgreSqlContainerFixture fixtur
     private Task<HttpResponseMessage> SendConcurrentRequestAsync(string key)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, "/orders/concurrent");
-        request.Headers.Add(HeaderNames.IdempotencyKey, key);
+        request.Headers.Add("Idempotency-Key", key);
         return Client.SendAsync(request, TestContext.Current.CancellationToken);
     }
 
