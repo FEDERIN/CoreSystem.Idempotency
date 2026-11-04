@@ -3,6 +3,7 @@ using Core.Idempotency.DependencyInjection;
 using Core.Idempotency.Options;
 using Core.Idempotency.Services;
 using FluentAssertions;
+using Core.Idempotency.UnitTests.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
@@ -40,18 +41,8 @@ public class IdempotencyRegistrationTests
     [Fact]
     public void AddCoreIdempotency_Should_Register_Configured_Options()
     {
-        // Arrange
-        var services = new ServiceCollection();
+        var provider = ServiceProviderFactory.Create(false);
 
-        // Act
-        services.AddCoreIdempotency(options =>
-        {
-            options.Enabled = false;
-        });
-
-        var provider = services.BuildServiceProvider();
-
-        // Assert
         var options = provider.GetRequiredService<IdempotencyOptions>();
 
         options.Enabled.Should().BeFalse();
@@ -76,18 +67,8 @@ public class IdempotencyRegistrationTests
     [Fact]
     public void AddCoreIdempotency_Should_Not_Register_CoreServices_When_Disabled()
     {
-        // Arrange
-        var services = new ServiceCollection();
+        var provider = ServiceProviderFactory.Create(false);
 
-        // Act
-        services.AddCoreIdempotency(options =>
-        {
-            options.Enabled = false;
-        });
-
-        var provider = services.BuildServiceProvider();
-
-        // Assert
         provider.GetService<IIdempotencyService>()
             .Should()
             .BeNull();

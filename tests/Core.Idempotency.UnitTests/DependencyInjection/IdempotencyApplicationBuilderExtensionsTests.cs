@@ -26,17 +26,10 @@ public class IdempotencyApplicationBuilderExtensionsTests
     [Fact]
     public void UseCoreIdempotency_Should_Throw_When_CoreIdempotency_Is_Not_Registered()
     {
-        // Arrange
-        var services = new ServiceCollection();
+        var app = CreateApp(null);
 
-        var provider = services.BuildServiceProvider();
-
-        var app = new ApplicationBuilder(provider);
-
-        // Act
         var action = () => app.UseCoreIdempotency();
 
-        // Assert
         action.Should()
               .Throw<InvalidOperationException>()
               .WithMessage(IdempotencyMessages.MissingRegistration);
@@ -45,16 +38,7 @@ public class IdempotencyApplicationBuilderExtensionsTests
     [Fact]
     public void UseCoreIdempotency_Should_Return_ApplicationBuilder_When_Disabled()
     {
-        var services = new ServiceCollection();
-
-        services.AddSingleton(new IdempotencyOptions
-        {
-            Enabled = false
-        });
-
-        var provider = services.BuildServiceProvider();
-
-        var app = new ApplicationBuilder(provider);
+        var app = CreateApp(new IdempotencyOptions { Enabled = false });
 
         var result = app.UseCoreIdempotency();
 
@@ -64,24 +48,22 @@ public class IdempotencyApplicationBuilderExtensionsTests
     [Fact]
     public void UseCoreIdempotency_Should_Throw_When_IdempotencyService_Is_Not_Registered()
     {
-        // Arrange
-        var services = new ServiceCollection();
+        var app = CreateApp(new IdempotencyOptions { Enabled = true });
 
-        services.AddSingleton(new IdempotencyOptions
-        {
-            Enabled = true
-        });
-
-        var provider = services.BuildServiceProvider();
-
-        var app = new ApplicationBuilder(provider);
-
-        // Act
         var action = () => app.UseCoreIdempotency();
 
-        // Assert
         action.Should()
               .Throw<InvalidOperationException>()
               .WithMessage(IdempotencyMessages.MissingRegistration);
+    }
+
+    private static ApplicationBuilder CreateApp(IdempotencyOptions? options)
+    {
+        var services = new ServiceCollection();
+
+        if(options is not null)
+            services.AddSingleton(options);
+        
+        return new ApplicationBuilder(services.BuildServiceProvider());
     }
 }
