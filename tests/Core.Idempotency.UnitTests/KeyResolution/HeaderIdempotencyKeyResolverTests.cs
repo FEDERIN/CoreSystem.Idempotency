@@ -1,4 +1,3 @@
-using Core.Idempotency.Constants;
 using Core.Idempotency.KeyResolution;
 using Core.Idempotency.Options;
 using FluentAssertions;
@@ -13,10 +12,10 @@ public sealed class HeaderIdempotencyKeyResolverTests
     {
         var resolver = CreateResolver();
         var multiple = new DefaultHttpContext();
-        multiple.Request.Headers.Append(HeaderNames.IdempotencyKey, "one");
-        multiple.Request.Headers.Append(HeaderNames.IdempotencyKey, "two");
+        multiple.Request.Headers.Append("Idempotency-Key", "one");
+        multiple.Request.Headers.Append("Idempotency-Key", "two");
         var whitespace = new DefaultHttpContext();
-        whitespace.Request.Headers[HeaderNames.IdempotencyKey] = " key ";
+        whitespace.Request.Headers["Idempotency-Key"] = " key ";
 
         resolver.TryResolve(multiple, out _).Should().BeFalse();
         resolver.TryResolve(whitespace, out _).Should().BeFalse();
@@ -32,7 +31,7 @@ public sealed class HeaderIdempotencyKeyResolverTests
         var context = new DefaultHttpContext();
         context.Request.Method = HttpMethods.Post;
         context.Request.Path = "/orders";
-        context.Request.Headers[HeaderNames.IdempotencyKey] = new string('a', keyLength);
+        context.Request.Headers["Idempotency-Key"] = new string('a', keyLength);
 
         resolver.TryResolve(context, out _).Should().Be(expected);
     }
@@ -44,7 +43,7 @@ public sealed class HeaderIdempotencyKeyResolverTests
         var context = new DefaultHttpContext();
         context.Request.Method = HttpMethods.Post;
         context.Request.Path = "/orders";
-        context.Request.Headers[HeaderNames.IdempotencyKey] = new string('a', 11);
+        context.Request.Headers["Idempotency-Key"] = new string('a', 11);
 
         resolver.TryResolve(context, out _).Should().BeFalse();
     }
@@ -76,7 +75,7 @@ public sealed class HeaderIdempotencyKeyResolverTests
         var context = new DefaultHttpContext();
         context.Request.Method = HttpMethods.Post;
         context.Request.Path = path;
-        context.Request.Headers[HeaderNames.IdempotencyKey] = "operation-1";
+        context.Request.Headers["Idempotency-Key"] = "operation-1";
         context.Request.Headers["X-Tenant"] = tenant;
         return context;
     }

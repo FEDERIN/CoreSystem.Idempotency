@@ -1,8 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<IsTestProject>false</IsTestProject>
-	</PropertyGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\..\src\Core.Idempotency\Core.Idempotency.csproj" />
-	</ItemGroup>
-</Project>

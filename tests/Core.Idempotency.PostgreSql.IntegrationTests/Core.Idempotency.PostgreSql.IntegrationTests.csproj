@@ -5,7 +5,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Core.Idempotency.PostgreSql\Core.Idempotency.PostgreSql.csproj" />
-		<ProjectReference Include="..\Core.Idempotency.Testing\Core.Idempotency.Testing.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
