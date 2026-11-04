@@ -10,16 +10,21 @@ public abstract class IdempotencyTestsBase
     [Fact]
     public async Task Should_ReturnCachedResponse_When_RequestIsRepeated()
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, "/orders");
-        request.Headers.Add(HeaderNames.IdempotencyKey, "123");
+        var request = RequestOrders();
 
         var response1 = await Client.SendAsync(request, TestContext.Current.CancellationToken);
 
-        request = new HttpRequestMessage(HttpMethod.Post, "/orders");
-        request.Headers.Add(HeaderNames.IdempotencyKey, "123");
+        request = RequestOrders();
 
         var response2 = await Client.SendAsync(request, TestContext.Current.CancellationToken);
 
         response2.Headers.Should().Contain(h => h.Key == HeaderNames.IdempotencyCache);
+    }
+
+    private static HttpRequestMessage RequestOrders()
+    {
+        HttpRequestMessage request = new(HttpMethod.Post, "/orders");
+        request.Headers.Add(HeaderNames.IdempotencyKey, "123");
+        return request;
     }
 }
