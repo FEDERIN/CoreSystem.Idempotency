@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<PackageId>CoreSystem.Idempotency.Redis</PackageId>
-
 		<Version>2.1.1</Version>
 		<AssemblyVersion>2.1.1</AssemblyVersion>
 		<FileVersion>2.1.1.0</FileVersion>
 		<InformationalVersion>2.1.1</InformationalVersion>
-
 		<PackageReleaseNotes>
 			2.1.1: Patch release. Consumes CoreSystem.Idempotency 2.1.1 which exposes Constants.HeaderNames as public.
 			2.1.0: Multi-targeting release. The package now ships net8.0, net9.0 and net10.0 assets instead of net8.0 only, so a project on .NET 9 or .NET 10 gets an assembly compiled for its own target framework.
@@ -20,9 +18,6 @@
 		</Description>
 		
 		<PackageProjectUrl>https://federin.github.io/CoreSystem.Idempotency/Providers/Redis/</PackageProjectUrl>
-
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 
 		<PackageTags>
 			Redis;
@@ -43,10 +38,6 @@
 		<PackageReference Include="CoreSystem.Redis" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Include="..\..\LICENSE" Pack="true" PackagePath="" />
-	</ItemGroup>
-	
 	<ItemGroup>
 		<InternalsVisibleTo Include="Core.Idempotency.Redis.UnitTests" />
 		<InternalsVisibleTo Include="Core.Idempotency.Redis.IntegrationTests" />
