@@ -3,10 +3,10 @@
 	<PropertyGroup>
 		<PackageId>CoreSystem.Idempotency</PackageId>
 
-		<Version>2.1.0</Version>
-		<AssemblyVersion>2.1.0</AssemblyVersion>
-		<FileVersion>2.1.0.0</FileVersion>
-		<InformationalVersion>2.1.0</InformationalVersion>
+		<Version>2.1.1</Version>
+		<AssemblyVersion>2.1.1</AssemblyVersion>
+		<FileVersion>2.1.1.0</FileVersion>
+		<InformationalVersion>2.1.1</InformationalVersion>
 
 		<PackageReleaseNotes>
 			2.1.1: Made Core.Idempotency.Constants.HeaderNames public so consumers can reference the well-known idempotency header names instead of hardcoding string literals.
