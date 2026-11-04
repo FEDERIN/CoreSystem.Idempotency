@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using FluentAssertions;
 using Core.Idempotency.Constants;
-using Core.Idempotency.Testing.Storage;
+using Core.Idempotency.Tests.Shared.Storage;
 
 namespace Core.Idempotency.PostgreSql.IntegrationTests.Storage;
 

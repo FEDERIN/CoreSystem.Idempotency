@@ -1,7 +1,7 @@
 using Core.Idempotency.Constants;
 using FluentAssertions;
 
-namespace Core.Idempotency.Testing.Storage;
+namespace Core.Idempotency.Tests.Shared.Storage;
 
 public abstract class IdempotencyTestsBase
 {
