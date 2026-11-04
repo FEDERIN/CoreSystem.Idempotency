@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using FluentAssertions;
 using Core.Idempotency.Constants;
-using Core.Idempotency.Testing.Storage;
+using Core.Idempotency.Tests.Shared.Storage;
 
 namespace Core.Idempotency.Redis.IntegrationTests.Storage;
 
 public sealed class RedisIdempotencyTests
     (RedisContainerFixture fixture)
-        : Core.Idempotency.Testing.Storage.IdempotencyTestsBase,
+        : IdempotencyTestsBase,
       IClassFixture<RedisContainerFixture>
 {
     private static int _concurrentExecutions;
