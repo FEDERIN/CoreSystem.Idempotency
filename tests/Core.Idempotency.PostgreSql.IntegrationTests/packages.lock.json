@@ -519,7 +519,7 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "core.idempotency.tests.shared": {
+      "core.idempotency.testing": {
         "type": "Project",
         "dependencies": {
           "CoreSystem.Idempotency": "[2.1.1, )",
@@ -1138,7 +1138,7 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "core.idempotency.tests.shared": {
+      "core.idempotency.testing": {
         "type": "Project",
         "dependencies": {
           "CoreSystem.Idempotency": "[2.1.1, )",
@@ -1748,7 +1748,7 @@
           "xunit.v3.runner.common": "[4.0.2]"
         }
       },
-      "core.idempotency.tests.shared": {
+      "core.idempotency.testing": {
         "type": "Project",
         "dependencies": {
           "CoreSystem.Idempotency": "[2.1.1, )",

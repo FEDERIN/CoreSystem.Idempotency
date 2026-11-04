@@ -5,7 +5,7 @@
 	
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\Core.Idempotency.Redis\Core.Idempotency.Redis.csproj" />
-		<ProjectReference Include="..\Core.Idempotency.Tests.Shared\Core.Idempotency.Tests.Shared.csproj" />
+		<ProjectReference Include="..\Core.Idempotency.Testing\Core.Idempotency.Testing.csproj" />
 	</ItemGroup>
 
 </Project>
