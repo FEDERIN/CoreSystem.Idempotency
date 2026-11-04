@@ -1,3 +1,4 @@
+using Core.Idempotency.Constants;
 using Core.Idempotency.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -44,7 +45,7 @@ public sealed class IdempotencyHeaderOperationFilter : IOperationFilter
 
         operation.Parameters.Add(new OpenApiParameter
         {
-            Name = "Idempotency-Key",
+            Name = HeaderNames.IdempotencyKey,
             In = ParameterLocation.Header,
             Required = false,
             Schema = new OpenApiSchema

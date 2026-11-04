@@ -434,7 +434,7 @@
       "CoreSystem.Idempotency.OpenApi": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.1.0, )",
+          "CoreSystem.Idempotency": "[2.1.1, )",
           "Swashbuckle.AspNetCore.SwaggerGen": "[9.0.6, )"
         }
       },
@@ -446,9 +446,9 @@
       },
       "CoreSystem.Idempotency": {
         "type": "CentralTransitive",
-        "requested": "[2.1.0, )",
-        "resolved": "2.1.0",
-        "contentHash": "aQIF4EwW77rFkCQtb91t7zz993LWL6sniNFrGWY0OgE5hKOi0qrNevpEDFmZ4AFRAsRX9dX7NmsfWklxZLmDzg==",
+        "requested": "[2.1.1, )",
+        "resolved": "2.1.1",
+        "contentHash": "mZ1aEv2634TgtW+RG/VTPfmWC3pLBsA2uHhIhlaaCvWTyp6QZBtKr7QRgzXmCi+bD3/aJH+BWGNTBaa9egoNyA==",
         "dependencies": {
           "CoreSystem.Http": "1.2.0",
           "CoreSystem.Observability.Abstractions": "1.1.0",
@@ -949,7 +949,7 @@
       "CoreSystem.Idempotency.OpenApi": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.1.0, )",
+          "CoreSystem.Idempotency": "[2.1.1, )",
           "Swashbuckle.AspNetCore.SwaggerGen": "[9.0.6, )"
         }
       },
@@ -961,9 +961,9 @@
       },
       "CoreSystem.Idempotency": {
         "type": "CentralTransitive",
-        "requested": "[2.1.0, )",
-        "resolved": "2.1.0",
-        "contentHash": "aQIF4EwW77rFkCQtb91t7zz993LWL6sniNFrGWY0OgE5hKOi0qrNevpEDFmZ4AFRAsRX9dX7NmsfWklxZLmDzg==",
+        "requested": "[2.1.1, )",
+        "resolved": "2.1.1",
+        "contentHash": "mZ1aEv2634TgtW+RG/VTPfmWC3pLBsA2uHhIhlaaCvWTyp6QZBtKr7QRgzXmCi+bD3/aJH+BWGNTBaa9egoNyA==",
         "dependencies": {
           "CoreSystem.Http": "1.2.0",
           "CoreSystem.Observability.Abstractions": "1.1.0",
@@ -1456,7 +1456,7 @@
       "CoreSystem.Idempotency.OpenApi": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.1.0, )",
+          "CoreSystem.Idempotency": "[2.1.1, )",
           "Swashbuckle.AspNetCore.SwaggerGen": "[9.0.6, )"
         }
       },
@@ -1468,9 +1468,9 @@
       },
       "CoreSystem.Idempotency": {
         "type": "CentralTransitive",
-        "requested": "[2.1.0, )",
-        "resolved": "2.1.0",
-        "contentHash": "aQIF4EwW77rFkCQtb91t7zz993LWL6sniNFrGWY0OgE5hKOi0qrNevpEDFmZ4AFRAsRX9dX7NmsfWklxZLmDzg==",
+        "requested": "[2.1.1, )",
+        "resolved": "2.1.1",
+        "contentHash": "mZ1aEv2634TgtW+RG/VTPfmWC3pLBsA2uHhIhlaaCvWTyp6QZBtKr7QRgzXmCi+bD3/aJH+BWGNTBaa9egoNyA==",
         "dependencies": {
           "CoreSystem.Http": "1.2.0",
           "CoreSystem.Observability.Abstractions": "1.1.0",

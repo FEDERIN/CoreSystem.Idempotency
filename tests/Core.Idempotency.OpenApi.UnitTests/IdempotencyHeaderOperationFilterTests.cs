@@ -1,3 +1,4 @@
+using Core.Idempotency.Constants;
 using Core.Idempotency.Options;
 using FluentAssertions;
 using Microsoft.OpenApi.Models;
@@ -54,8 +55,8 @@ public sealed class IdempotencyHeaderOperationFilterTests
 
         filter.Apply(operation, context);
 
-        operation.Parameters.Should().ContainSingle(p => p.Name == "Idempotency-Key" && p.In == ParameterLocation.Header);
-        var param = operation.Parameters!.Single(p => p.Name == "Idempotency-Key");
+        operation.Parameters.Should().ContainSingle(p => p.Name == HeaderNames.IdempotencyKey && p.In == ParameterLocation.Header);
+        var param = operation.Parameters!.Single(p => p.Name == HeaderNames.IdempotencyKey);
         param.Schema.Type.Should().Be("string");
         param.Schema.Format.Should().Be("uuid");
     }
