@@ -57,6 +57,9 @@ jobs:
             Core.Idempotency.PostgreSql)
               TEST_PROJECTS="tests/Core.Idempotency.PostgreSql.UnitTests/Core.Idempotency.PostgreSql.UnitTests.csproj tests/Core.Idempotency.PostgreSql.IntegrationTests/Core.Idempotency.PostgreSql.IntegrationTests.csproj"
               ;;
+            Core.Idempotency.OpenApi)
+              TEST_PROJECTS="tests/Core.Idempotency.OpenApi.UnitTests/Core.Idempotency.OpenApi.UnitTests.csproj"
+              ;;
             *)
               echo "Error: No test-project mapping exists for '$PROJECT'."
               exit 1
