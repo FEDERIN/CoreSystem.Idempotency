@@ -20,6 +20,6 @@ public abstract class IdempotencyTestsBase
 
         var response2 = await Client.SendAsync(request, TestContext.Current.CancellationToken);
 
-        response2.Headers.Should().Contain(h => h.Key == "X-Idempotency-Cache");
+        response2.Headers.Should().Contain(h => h.Key == HeaderNames.IdempotencyCache);
     }
 }
