@@ -17,7 +17,7 @@ rem
 rem  This script does NOT stage or commit anything. Review the diff first.
 rem ============================================================================
 
-cd /d "%~dp0"
+cd /d "%~dp0.."
 
 set "SLN="
 

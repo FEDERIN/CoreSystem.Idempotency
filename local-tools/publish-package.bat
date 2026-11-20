@@ -30,7 +30,7 @@ rem  live version fails with 409 instead of pretending to succeed. Check the
 rem  version before running this.
 rem ============================================================================
 
-cd /d "%~dp0"
+cd /d "%~dp0.."
 
 set "PROJECT=%~1"
 set "VERSION=%~2"
@@ -143,7 +143,7 @@ echo.
 echo [1/8] Checking nuget.org for an existing %PACKAGE_ID% %VERSION%...
 
 set "VERSION_CHECK="
-for /f "usebackq delims=" %%V in (`powershell -NoProfile -Command "$ErrorActionPreference='Stop'; try { $id='%PACKAGE_ID%'.ToLowerInvariant(); $r=Invoke-RestMethod ('https://api.nuget.org/v3-flatcontainer/'+$id+'/index.json') -TimeoutSec 20; if ($r.versions -contains '%VERSION%') { 'PUBLISHED' } else { 'NOT_PUBLISHED' } } catch { 'CHECK_FAILED' }"`) do set "VERSION_CHECK=%%V"
+for /f "usebackq delims=" %%V in (`powershell -NoProfile -Command "$ErrorActionPreference='Stop'; try { $id='%PACKAGE_ID%'.ToLowerInvariant(); $r=Invoke-RestMethod ('https://api.nuget.org/v3-flatcontainer/'+$id+'/index.json') -TimeoutSec 20; if ($r.versions -contains '%VERSION%') { 'PUBLISHED' } else { 'NOT_PUBLISHED' } } catch { 'NOT_PUBLISHED' }"`) do set "VERSION_CHECK=%%V"
 
 if /i "!VERSION_CHECK!"=="PUBLISHED" (
     echo.

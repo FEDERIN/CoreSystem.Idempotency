@@ -4,9 +4,6 @@
 
 CoreSystem.Idempotency is a middleware-based idempotency framework for distributed applications. It fingerprints incoming requests, persists successful responses through pluggable storage providers, and replays completed operations instead of executing them twice.
 
-The package targets .NET 8, .NET 9 and .NET 10, and ships an assembly for each
-of those frameworks.
-
 ![NuGet](https://img.shields.io/nuget/v/CoreSystem.Idempotency?style=for-the-badge)
 ![Downloads](https://img.shields.io/nuget/dt/CoreSystem.Idempotency?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
@@ -36,6 +33,8 @@ Install the framework, then a storage provider. A provider is required.
 ```bash
 dotnet add package CoreSystem.Idempotency
 ```
+
+The package targets .NET 8, .NET 9 and .NET 10, and ships an assembly for each of those frameworks.
 
 | Package | Purpose |
 |---------|---------|
@@ -80,7 +79,7 @@ builder.Services.AddCoreIdempotencyPostgreSql(options =>
 });
 ```
 
-Enable the middleware.
+Enable the middleware after routing and before the endpoints.
 
 ```csharp
 app.UseCoreIdempotency();
@@ -128,15 +127,15 @@ Response       │
        Persist Response
 ```
 
-Every duplicate request receives the original response without executing the application endpoint again.
+A completed duplicate receives the stored response without executing the endpoint again. A request that arrives while the original is still running receives `409 Conflict` with `Retry-After: 1`. A request that reuses a key with a different fingerprint is rejected with `IdempotencyFingerprintMismatchException`.
 
 ---
 
 ## 📊 Built-in Observability
 
-OpenTelemetry metrics are published out of the box: request processing, cache hits and misses, response replay, storage read and write latency, and persisted payload size.
+OpenTelemetry metrics are published out of the box through the `IdempotencyMetrics` meter: request count, cache hits and misses, response replays, storage write count, storage read and write duration, and response body size.
 
-Compatible with OpenTelemetry, Prometheus, Grafana, Azure Monitor, Jaeger, Elastic and Datadog.
+Metrics are exported through the standard OpenTelemetry exporters, so any OpenTelemetry-compatible backend can receive them.
 
 ---
 
@@ -167,12 +166,12 @@ This provider-based architecture allows new storage implementations to be introd
 
 ## 📚 Documentation
 
-- Getting Started
-- Architecture and configuration
-- Storage providers: Redis, PostgreSQL
-- Delivery guarantees
-- Fingerprinting and response replay
-- Observability and error reference
+- [Getting Started](https://federin.github.io/CoreSystem.Idempotency/GettingStarted/)
+- [Architecture](https://federin.github.io/CoreSystem.Idempotency/Architecture/) and [configuration](https://federin.github.io/CoreSystem.Idempotency/Configuration/)
+- Storage providers: [Redis](https://federin.github.io/CoreSystem.Idempotency/Providers/Redis/) and [PostgreSQL](https://federin.github.io/CoreSystem.Idempotency/Providers/PostgreSQL/)
+- [Delivery guarantees](https://federin.github.io/CoreSystem.Idempotency/Guarantees/)
+- [Fingerprinting](https://federin.github.io/CoreSystem.Idempotency/Fingerprinting/) and [response replay](https://federin.github.io/CoreSystem.Idempotency/ResponseCaching/)
+- [Observability](https://federin.github.io/CoreSystem.Idempotency/Observability/) and [error reference](https://federin.github.io/CoreSystem.Idempotency/Errors/idempotency-fingerprint-mismatch/)
 
 ---
 

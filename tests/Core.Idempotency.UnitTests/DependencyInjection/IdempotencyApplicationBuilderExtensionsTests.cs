@@ -61,9 +61,9 @@ public class IdempotencyApplicationBuilderExtensionsTests
     {
         var services = new ServiceCollection();
 
-        if(options is not null)
+        if (options is not null)
             services.AddSingleton(options);
-        
+
         return new ApplicationBuilder(services.BuildServiceProvider());
     }
 }
