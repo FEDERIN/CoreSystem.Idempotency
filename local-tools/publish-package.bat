@@ -30,7 +30,7 @@ rem  live version fails with 409 instead of pretending to succeed. Check the
 rem  version before running this.
 rem ============================================================================
 
-cd /d "%~dp0"
+cd /d "%~dp0.."
 
 set "PROJECT=%~1"
 set "VERSION=%~2"

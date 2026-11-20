@@ -2,7 +2,7 @@
 
 > **OpenAPI/Swagger integration for CoreSystem.Idempotency that documents the `Idempotency-Key` header on idempotent operations.**
 
-OpenAPI/Swagger integration for CoreSystem.Idempotency. Documents the `Idempotency-Key` header on idempotent operations so consumers of your API discover the header from the generated spec.
+Consumers of your API should discover the `Idempotency-Key` header from the generated OpenAPI document, not from documentation written by hand. This package adds the header to every operation whose HTTP method is idempotent, so it appears in Swagger UI and in the exported spec.
 
 ![NuGet](https://img.shields.io/nuget/v/CoreSystem.Idempotency.OpenApi?style=for-the-badge)
 ![Downloads](https://img.shields.io/nuget/dt/CoreSystem.Idempotency.OpenApi?style=for-the-badge)
@@ -18,15 +18,30 @@ OpenAPI/Swagger integration for CoreSystem.Idempotency. Documents the `Idempoten
 - ✅ Works with Swashbuckle (`IOperationFilter`).
 - ✅ Multi-targets net8.0, net9.0 and net10.0.
 
+---
+
 ## 📦 Installation
+
+Install the OpenAPI package. It depends on `CoreSystem.Idempotency` and `Swashbuckle.AspNetCore.SwaggerGen`, which are restored automatically.
 
 ```bash
 dotnet add package CoreSystem.Idempotency.OpenApi
 ```
 
+---
+
 ## 🚀 Quick Start
 
-Register the filter with Swashbuckle:
+Register the core framework first, so `IdempotencyOptions` is available to the filter.
+
+```csharp
+builder.Services.AddCoreIdempotency(options =>
+{
+    options.Enabled = true;
+});
+```
+
+Register the filter with Swashbuckle.
 
 ```csharp
 builder.Services.AddSwaggerGen(options =>
@@ -35,27 +50,46 @@ builder.Services.AddSwaggerGen(options =>
 });
 ```
 
-The filter resolves `IOptions<IdempotencyOptions>` from the service provider, so ensure idempotency is configured:
+The filter resolves `IOptions<IdempotencyOptions>` from the service provider. Calling `AddCoreIdempotency` provides it, so the filter needs no separate registration.
 
-```csharp
-builder.Services.AddIdempotency(options =>
-{
-    options.Enabled = true;
-});
-```
+---
+
+## 🧩 How the Header Is Documented
+
+`IdempotencyHeaderOperationFilter` implements `Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter`. For each operation it reads `OperationFilterContext.ApiDescription.HttpMethod`. When idempotency is enabled and the method is in `AllowedMethods`, it appends an `OpenApiParameter` named `Idempotency-Key` to the operation. The parameter is a header, optional, with a `string` schema in `uuid` format. Its description lists the allowed methods.
+
+The filter adds nothing when `IdempotencyOptions.Enabled` is `false`, or when the method is not in `AllowedMethods`.
+
+---
 
 ## 🏗 Architecture
 
-`IdempotencyHeaderOperationFilter` implements `Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter`. It inspects `OperationFilterContext.ApiDescription.HttpMethod` and, when the method is in `AllowedMethods`, appends an `OpenApiParameter` named `Idempotency-Key` (header, string/uuid) to the operation.
+The package is a thin layer over the core framework. It holds no state of its own: the filter reads the same `IdempotencyOptions` that the middleware uses, so the documented header always matches the runtime behavior.
+
+```text
+Swashbuckle SwaggerGen
+        │
+        ▼
+IdempotencyHeaderOperationFilter
+        │
+        ▼
+IOptions<IdempotencyOptions>   (CoreSystem.Idempotency)
+```
+
+---
 
 ## 📚 Documentation
 
-- Full documentation site: https://federin.github.io/CoreSystem.Idempotency/
-- Core package: CoreSystem.Idempotency
+- Full documentation site: https://federin.github.io/CoreSystem.Idempotency/OpenApi/
+- Core package: [CoreSystem.Idempotency](https://www.nuget.org/packages/CoreSystem.Idempotency)
+
+---
 
 ## 🤝 Contributing
 
 Contributions are welcome. Please open an issue or pull request.
+
+---
 
 ## 📄 License
 

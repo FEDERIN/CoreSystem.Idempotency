@@ -1,7 +1,6 @@
-using Core.Idempotency.OpenApi;
+using Core.Idempotency.Constants;
 using Core.Idempotency.Options;
 using FluentAssertions;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -44,7 +43,7 @@ public sealed class IdempotencyHeaderOperationFilterTests
         var operation = new OpenApiOperation();
         var context = CreateContext("post");
         filter.Apply(operation, context);
-        operation.Parameters.Should().ContainSingle(p => p.Name == "Idempotency-Key" && p.In == ParameterLocation.Header);
+        operation.Parameters.Should().ContainSingle(p => p.Name == HeaderNames.IdempotencyKey && p.In == ParameterLocation.Header);
     }
 
     private static OperationFilterContext CreateContext(string httpMethod)
