@@ -522,7 +522,7 @@
       "CoreSystem.Idempotency.PostgreSql": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.1.1, )",
+          "CoreSystem.Idempotency": "[2.1.2, )",
           "Dapper": "[2.1.100, )",
           "Npgsql": "[10.0.4, )"
         }
@@ -535,13 +535,13 @@
       },
       "CoreSystem.Idempotency": {
         "type": "CentralTransitive",
-        "requested": "[2.1.1, )",
-        "resolved": "2.1.1",
-        "contentHash": "mZ1aEv2634TgtW+RG/VTPfmWC3pLBsA2uHhIhlaaCvWTyp6QZBtKr7QRgzXmCi+bD3/aJH+BWGNTBaa9egoNyA==",
+        "requested": "[2.1.2, )",
+        "resolved": "2.1.2",
+        "contentHash": "2gPDDZjcQlmyHSjnmfhOp2oyE769rLsQHKpDWM/YCvIJabc/Dcpe7lfIGiKOP+PwW33H2cHSVq0YSsoHEDFyEA==",
         "dependencies": {
           "CoreSystem.Http": "1.2.0",
-          "CoreSystem.Observability.Abstractions": "1.1.0",
-          "CoreSystem.Serialization": "1.3.0",
+          "CoreSystem.Observability.Abstractions": "1.1.1",
+          "CoreSystem.Serialization": "1.3.1",
           "OpenTelemetry.Extensions.Hosting": "1.20.1"
         }
       },
@@ -1139,7 +1139,7 @@
       "CoreSystem.Idempotency.PostgreSql": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.1.1, )",
+          "CoreSystem.Idempotency": "[2.1.2, )",
           "Dapper": "[2.1.100, )",
           "Npgsql": "[8.0.9, )"
         }
@@ -1152,13 +1152,13 @@
       },
       "CoreSystem.Idempotency": {
         "type": "CentralTransitive",
-        "requested": "[2.1.1, )",
-        "resolved": "2.1.1",
-        "contentHash": "mZ1aEv2634TgtW+RG/VTPfmWC3pLBsA2uHhIhlaaCvWTyp6QZBtKr7QRgzXmCi+bD3/aJH+BWGNTBaa9egoNyA==",
+        "requested": "[2.1.2, )",
+        "resolved": "2.1.2",
+        "contentHash": "2gPDDZjcQlmyHSjnmfhOp2oyE769rLsQHKpDWM/YCvIJabc/Dcpe7lfIGiKOP+PwW33H2cHSVq0YSsoHEDFyEA==",
         "dependencies": {
           "CoreSystem.Http": "1.2.0",
-          "CoreSystem.Observability.Abstractions": "1.1.0",
-          "CoreSystem.Serialization": "1.3.0",
+          "CoreSystem.Observability.Abstractions": "1.1.1",
+          "CoreSystem.Serialization": "1.3.1",
           "OpenTelemetry.Extensions.Hosting": "1.20.1"
         }
       },
@@ -1747,7 +1747,7 @@
       "CoreSystem.Idempotency.PostgreSql": {
         "type": "Project",
         "dependencies": {
-          "CoreSystem.Idempotency": "[2.1.1, )",
+          "CoreSystem.Idempotency": "[2.1.2, )",
           "Dapper": "[2.1.100, )",
           "Npgsql": "[9.0.5, )"
         }
@@ -1760,13 +1760,13 @@
       },
       "CoreSystem.Idempotency": {
         "type": "CentralTransitive",
-        "requested": "[2.1.1, )",
-        "resolved": "2.1.1",
-        "contentHash": "mZ1aEv2634TgtW+RG/VTPfmWC3pLBsA2uHhIhlaaCvWTyp6QZBtKr7QRgzXmCi+bD3/aJH+BWGNTBaa9egoNyA==",
+        "requested": "[2.1.2, )",
+        "resolved": "2.1.2",
+        "contentHash": "2gPDDZjcQlmyHSjnmfhOp2oyE769rLsQHKpDWM/YCvIJabc/Dcpe7lfIGiKOP+PwW33H2cHSVq0YSsoHEDFyEA==",
         "dependencies": {
           "CoreSystem.Http": "1.2.0",
-          "CoreSystem.Observability.Abstractions": "1.1.0",
-          "CoreSystem.Serialization": "1.3.0",
+          "CoreSystem.Observability.Abstractions": "1.1.1",
+          "CoreSystem.Serialization": "1.3.1",
           "OpenTelemetry.Extensions.Hosting": "1.20.1"
         }
       },
