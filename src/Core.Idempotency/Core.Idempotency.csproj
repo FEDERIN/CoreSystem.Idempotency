@@ -3,12 +3,13 @@
 	<PropertyGroup>
 		<PackageId>CoreSystem.Idempotency</PackageId>
 
-		<Version>2.1.1</Version>
-		<AssemblyVersion>2.1.1</AssemblyVersion>
-		<FileVersion>2.1.1.0</FileVersion>
-		<InformationalVersion>2.1.1</InformationalVersion>
+		<Version>2.1.2</Version>
+		<AssemblyVersion>2.1.2.0</AssemblyVersion>
+		<FileVersion>2.1.2.0</FileVersion>
+		<InformationalVersion>2.1.2</InformationalVersion>
 
 		<PackageReleaseNotes>
+			2.1.2: Documentation and dependency refresh. No code or API changes. The packaged README now places the .NET 8/9/10 multi-targeting statement after installation, documents that a duplicate arriving while the original is still in flight receives 409 Conflict with Retry-After: 1, aligns the observability section with the IdempotencyMetrics meter, and links each documentation section. Dependency refresh: CoreSystem.Observability.Abstractions 1.1.0 to 1.1.1 and CoreSystem.Serialization 1.3.0 to 1.3.1, so the declared floors match the versions the assembly was built and tested against.
 			2.1.1: Made Core.Idempotency.Constants.HeaderNames public so consumers can reference the well-known idempotency header names instead of hardcoding string literals.
 			2.1.0: Multi-targeting release. The package now ships net8.0, net9.0 and net10.0 assets instead of net8.0 only, so a project on .NET 9 or .NET 10 gets an assembly compiled for its own target framework.
 			Dependency refresh. No code or API changes.
